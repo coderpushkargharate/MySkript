@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "project",
+			"path": ".."
+		},
+		{
+			"name": "public",
+			"path": "../../../MyScript/public"
+		}
+	],
+	"settings": {}
+}
