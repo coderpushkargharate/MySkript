@@ -33,33 +33,52 @@ export default function StepsSection() {
   ];
 
   return (
-    <section className="bg-[#faf9f7] py-16">
+    <section className="bg-[#faf9f7] py-20">
       <div className="max-w-7xl mx-auto px-6 text-center">
-        {/* Heading */}
-        <button className="bg-gradient-to-r from-blue-500 to-pink-500 text-white px-5 py-2 rounded-full text-sm font-semibold">
+        {/* Button */}
+        <button
+          style={{
+            background: "linear-gradient(90deg, #2087FF 0%, #E60CEB 100%)",
+            color: "#ffffff",
+            padding: "8px 20px",
+            borderRadius: "9999px",
+            fontSize: "14px",
+            fontWeight: 600,
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
           How to Use?
         </button>
-        <h2 className="text-4xl font-bold mt-4">Simple Steps to Get Started</h2>
-        <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
+
+        {/* Heading */}
+        <h2 className="text-[38px] font-bold mt-4 leading-tight tracking-tight">
+          Simple Steps to Get Started
+        </h2>
+
+        {/* Subheading */}
+        <p className="text-[#555] text-[16px] mt-5 max-w-2xl mx-auto leading-relaxed">
           Experience CRM at its finest with smooth integration, insightful
           analytics, and a user experience built for the future.
         </p>
 
         {/* Steps */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
           {steps.map((step, index) => (
             <div
               key={index}
-              className="bg-white rounded-2xl shadow-sm border p-6 text-left flex flex-col justify-between"
+              className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-left flex flex-col justify-between transition-transform hover:scale-[1.02]"
             >
-              <p className="text-gray-500 text-sm">{step.step}</p>
+              <p className="text-gray-500 text-[14px]">{step.step}</p>
               <div className="flex justify-between items-center mt-2">
-                <h3 className="font-semibold text-lg">{step.title}</h3>
-                <div className="text-orange-500 bg-orange-50 rounded-full p-3 text-xl">
+                <h3 className="font-semibold text-[18px]">{step.title}</h3>
+                <div className="text-orange-500 bg-orange-50 rounded-full p-3 text-[18px]">
                   {step.icon}
                 </div>
               </div>
-              <p className="text-gray-500 text-sm mt-3">{step.description}</p>
+              <p className="text-gray-500 text-[14px] mt-3 leading-relaxed">
+                {step.description}
+              </p>
             </div>
           ))}
         </div>

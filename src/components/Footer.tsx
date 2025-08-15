@@ -8,10 +8,8 @@ export default function Footer() {
         {/* Company Info */}
         <div>
           <div className="flex items-center gap-2 mb-4">
-            <img src="/logo.svg" alt="myskript logo" width={40} height={40} />
-            <span className="text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-blue-500">
-              myskript
-            </span>
+            <img src="/img/Myskript Logos.png" alt="myskript logo" width={100} height={100} />
+            
           </div>
           <p className="mb-4">
             Myskript Infotech
@@ -54,6 +52,12 @@ export default function Footer() {
             <li><Link to="#">Instagram</Link></li>
             <li><Link to="#">LinkedIn</Link></li>
             <li><Link to="#">Facebook</Link></li>
+             <Link 
+            to="/login"
+            className="px-4 py-2 bg-white text-gray-700 rounded-lg border mt-5 border-gray-200 hover:bg-gray-50 transition-colors duration-200"
+          >
+            Dashboard Login
+          </Link>
           </ul>
         </div>
       </div>

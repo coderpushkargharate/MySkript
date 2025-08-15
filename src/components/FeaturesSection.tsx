@@ -4,16 +4,45 @@ export default function FeaturesSection() {
   return (
     <section className="bg-white py-16 px-4 md:px-60 space-y-16">
       <div className="text-center mb-12 px-5">
-        <span className="bg-gradient-to-r from-blue-500 to-purple-500 text-white py-1 px-4 rounded-full text-sm font-medium inline-block mb-4">
-          Top Features
-        </span>
-        <h2 className="text-4xl md:text-5xl font-bold mb-4">
-          Simple but still includes <span className="text-black">Tons of Features</span>
-        </h2>
-        <p className="text-gray-600 max-w-2xl mx-auto">
-          Adapt our platform to suit your unique business needs with flexible,
-          scalable solutions designed to grow with you.
-        </p>
+       <span
+  style={{
+    background: "linear-gradient(90deg, #2087FF 0%, #E60CEB 100%)",
+    color: "#ffffff",
+    padding: "0.25rem 1rem", // py-1 px-4
+    borderRadius: "9999px", // rounded-full
+    fontSize: "0.875rem", // text-sm
+    fontWeight: 500, // font-medium
+    display: "inline-block",
+    marginBottom: "1rem"
+  }}
+>
+  Top Features
+</span>
+
+        <h2
+  style={{
+    fontSize: "2.9rem", // text-4xl
+    fontWeight: "500", // font-bold
+    marginBottom: "1rem", // mb-4
+    lineHeight: 1.2,
+  }}
+>
+  Simple but still includes{" "}
+  <span style={{ color: "#000000" }}>Tons of Features</span>
+</h2>
+
+<p
+  style={{
+    color: "#4B5563", // text-gray-600
+    maxWidth: "42rem", // max-w-2xl (~672px)
+    margin: "0 auto",
+    lineHeight: 1.5,
+  }}
+>
+  Adapt our platform to suit your unique business needs with flexible, <br />
+  scalable solutions designed to grow with you.
+</p>
+
       </div>
 
       {/* Section 1: Funnel Builder */}

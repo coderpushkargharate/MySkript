@@ -26,7 +26,7 @@ export default function BenefitsSection() {
           title: 'Team Collaboration',
           description: 'Collaborate with team using all in one team inbox.',
           icon: 'https://framerusercontent.com/images/J99C1i2fb1NT2M6psXb0G98jgk.svg',
-          image: '/mnt/data/e078be5b-934d-49c7-88be-26225224223c.png',
+          image: 'https://framerusercontent.com/images/A7cCrglKezIsVIm88768rZVcFJo.png',
         },
       ],
     },
@@ -121,9 +121,22 @@ export default function BenefitsSection() {
           <div className="max-w-7xl mx-auto px-4">
             {index === 0 && (
               <div className="text-center pt-5">
-                <div className="inline-block mb-4 px-4 py-1 rounded-full bg-gradient-to-r from-blue-500 to-pink-500 text-white text-sm font-semibold shadow-sm">
-                  {section.title}
-                </div>
+            <div
+  style={{
+    display: "inline-block",
+    marginBottom: "1rem",         // mb-4
+    padding: "0.25rem 1rem",      // py-1 px-4
+    borderRadius: "9999px",       // rounded-full
+background: "linear-gradient(90deg, #2087FF 0%, #E60CEB 100%)",
+    color: "#ffffff",             // text-white
+    fontSize: "0.875rem",         // text-sm
+    fontWeight: 600,              // font-semibold
+    boxShadow: "0 1px 2px rgba(0,0,0,0.05)" // shadow-sm
+  }}
+>
+  {section.title}
+</div>
+
                 <h2 className="text-4xl font-bold text-gray-900 mb-4">
                   {section.heading}
                 </h2>

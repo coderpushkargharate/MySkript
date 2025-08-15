@@ -41,9 +41,21 @@ export default function IntegrationsSection() {
         </div>
 
         {/* Badge */}
-        <button className="bg-gradient-to-r from-blue-500 to-pink-500 text-white px-5 py-2 rounded-full text-sm font-semibold">
-          Integration
-        </button>
+        <button
+  style={{
+    background: "linear-gradient(90deg, #2087FF 0%, #E60CEB 100%)",
+    color: "#ffffff",                        // text-white
+    padding: "0.5rem 1.25rem",               // py-2 px-5
+    borderRadius: "9999px",                  // rounded-full
+    fontSize: "0.875rem",                    // text-sm
+    fontWeight: 600,                         // font-semibold
+    border: "none",                          // remove default border
+    cursor: "pointer"                        // pointer on hover
+  }}
+>
+  Integration
+</button>
+
 
         {/* Heading */}
         <h2 className="text-4xl font-bold mt-4">

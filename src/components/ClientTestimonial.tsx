@@ -27,9 +27,21 @@ export default function TestimonialsSection() {
     <section className="bg-white py-16">
       <div className="max-w-7xl mx-auto px-6 text-center">
         {/* Header */}
-        <button className="bg-gradient-to-r from-blue-500 to-pink-500 text-white px-5 py-2 rounded-full text-sm font-semibold">
-          Clients Stories
-        </button>
+       <button
+  style={{
+    background: "linear-gradient(90deg, #2087FF 0%, #E60CEB 100%)",
+    color: "#ffffff",                        // text-white
+    padding: "0.5rem 1.25rem",               // py-2 px-5
+    borderRadius: "9999px",                  // rounded-full
+    fontSize: "0.875rem",                    // text-sm
+    fontWeight: 600,                         // font-semibold
+    border: "none",                          // remove default border
+    cursor: "pointer"                        // pointer on hover
+  }}
+>
+  Clients Stories
+</button>
+
         <h2 className="text-4xl font-bold mt-4">
           See What Our Clients Are Saying
         </h2>
@@ -55,9 +67,25 @@ export default function TestimonialsSection() {
             <p className="text-gray-500 text-sm">
               Founder, Bikaner Solutions
             </p>
-            <button className="mt-6 bg-gradient-to-r from-blue-500 to-pink-500 text-white px-5 py-3 rounded-lg text-sm font-semibold flex items-center gap-2">
-              Try 7 Day Free Trial →
-            </button>
+            <button
+  style={{
+    marginTop: "1.5rem",                      // mt-6
+    background: "linear-gradient(90deg, #2087FF 0%, #E60CEB 100%)",
+    color: "#ffffff",                         // text-white
+    padding: "0.75rem 1.25rem",               // py-3 px-5
+    borderRadius: "0.5rem",                   // rounded-lg
+    fontSize: "0.875rem",                     // text-sm
+    fontWeight: 600,                          // font-semibold
+    display: "flex",                          // flex
+    alignItems: "center",                     // items-center
+    gap: "0.5rem",                            // gap-2
+    border: "none",                           // remove default border
+    cursor: "pointer"                         // pointer on hover
+  }}
+>
+  Try 7 Day Free Trial →
+</button>
+
           </div>
         </div>
 

@@ -13,38 +13,57 @@ export default function Header() {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white rounded-full shadow-md px-4 py-2 mx-auto max-w-5xl mt-4">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white rounded-full shadow-md px-8 py-3 mx-auto max-w-[68rem] mt-4">
       <div className="flex items-center justify-between">
         {/* Logo */}
         <a href="/" className="flex items-center space-x-2">
           <img
             src="/img/Myskript Logos.png"
             alt="myskript logo"
-            width={100}
-            height={100}
+            className="h-10 w-auto"
           />
-         
         </a>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex space-x-6 items-center">
+        <nav className="hidden md:flex space-x-12 items-center">
           {navItems.map((item) => (
             <a
               key={item.name}
               href={item.href}
-              className="text-gray-700 font-medium hover:text-black transition-colors duration-200"
+              className="text-gray-800 text-[17px] font-normal tracking-wide hover:text-black transition-colors duration-200"
+              style={{ fontFamily: 'Inter, sans-serif' }}
             >
               {item.name}
             </a>
           ))}
         </nav>
 
-        {/* CTA Button */}
-        <div className="hidden md:block">
-          <button className="bg-gradient-to-r from-blue-500 to-fuchsia-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium px-5 py-2 rounded-full transition-all duration-200 shadow-lg">
-            Get 7 Day Free Trial →
-          </button>
-        </div>
+      {/* CTA Button */}
+<div className="hidden md:block">
+  <button
+    style={{
+    background: "linear-gradient(90deg, #2087FF 0%, #E60CEB 100%)",
+      color: "#fff",
+      fontSize: "14px",
+      fontWeight: 500,
+      padding: "8px 20px",
+      borderRadius: "15px",
+      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+      transition: "all 0.2s ease-in-out",
+    }}
+    onMouseOver={(e) =>
+      (e.currentTarget.style.background =
+        "linear-gradient(90deg, #2087FF 0%, #E60CEB 100%)")
+    }
+    onMouseOut={(e) =>
+      (e.currentTarget.style.background =
+       "linear-gradient(90deg, #2087FF 0%, #E60CEB 100%)")
+    }
+  >
+    Get 7 Day Free Trial →
+  </button>
+</div>
+
 
         {/* Mobile Menu Toggle */}
         <div className="md:hidden">
@@ -64,13 +83,14 @@ export default function Header() {
             <a
               key={item.name}
               href={item.href}
-              className="block text-gray-700 font-medium hover:text-black"
+              className="block text-gray-800 text-[15px] font-normal tracking-wide hover:text-black"
+              style={{ fontFamily: 'Inter, sans-serif' }}
               onClick={() => setIsMenuOpen(false)}
             >
               {item.name}
             </a>
           ))}
-          <button className="w-full bg-gradient-to-r from-blue-500 to-fuchsia-600 text-white font-medium py-2 rounded-full">
+          <button className="w-full bg-gradient-to-r from-blue-500 to-fuchsia-600 text-white text-sm font-medium py-2 rounded-full">
             Get 7 Day Free Trial →
           </button>
         </div>

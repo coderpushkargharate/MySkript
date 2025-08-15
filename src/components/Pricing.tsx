@@ -5,16 +5,29 @@ import { Check, Zap, Crown, Rocket } from 'lucide-react';
 const plans = [
   {
     id: "plan_R1uo385RzbRIKA",
-    name: "Standard",
+    name: "Standard Plan",
     price: "₹4,850",
     yearlyPrice: "₹48,500",
     period: "month",
     yearlyPeriod: "year",
     yearlyId: "plan_R1usIilBLpME0T",
-    description: "Perfect for small businesses and startups",
+    description: "Small businesses",
     icon: Zap,
     color: "blue",
     features: [
+      "Unlimited Funnels",
+      "Unlimited Automations",
+      "Unlimited Forms & Surveys",
+      "Appointment Booking",
+      "CRM with Unlimited Leads",
+      "Unlimited Pipelines",
+      "Unlimited Courses",
+      "Unlimited Blogs",
+      "Social Media Posts Scheduler",
+      "AI Paid Ads Tracking",
+      "Detailed Reports & Analytics",
+      "A/B Split Testing",
+      "Team Management",
       "Website Builder",
       "AI Inbox",
       "Unlimited Domains",
@@ -26,45 +39,80 @@ const plans = [
   },
   {
     id: "plan_R1uqJGdXsakTwx",
-    name: "Premium",
+    name: "Premium Plan",
     price: "₹6,450",
     yearlyPrice: "₹64,500",
     period: "month",
     yearlyPeriod: "year",
     yearlyId: "plan_R1uyUso2JEH0hG",
-    description: "Ideal for growing businesses",
+    description: "Growing businesses",
     icon: Crown,
     color: "purple",
     popular: true,
     features: [
-      "Everything in Standard",
-      "Advanced Analytics",
-      "Priority Support",
-      "Custom Integrations",
-      "Advanced AI Features",
-      "White-label Options",
-      "API Access"
+      "Unlimited Funnels",
+      "Unlimited Automations",
+      "Unlimited Forms & Surveys",
+      "Appointment Booking",
+      "CRM with Unlimited Leads",
+      "Unlimited Pipelines",
+      "Unlimited Courses",
+      "Unlimited Blogs",
+      "Social Media Posts Scheduler",
+      "AI Paid Ads Tracking",
+      "Detailed Reports & Analytics",
+      "A/B Split Testing",
+      "Team Management",
+      "Website Builder",
+      "AI Inbox",
+      "Unlimited Domains",
+      "3000+ Templates",
+      "Link Tracking & Redirections",
+      "AI Agents - Voice, Chat, Content",
+      "GMB Reviews & Messaging",
+      "In-Built WhatsApp API",
+      "Email Marketing",
+      "2 Way Text & Email Conversations",
+      "24/7 Priority Support"
     ]
   },
   {
     id: "plan_R1uqvnksOBtSEH",
-    name: "Enterprise",
+    name: "Enterprise Plan",
     price: "₹9,850",
     yearlyPrice: "₹98,500",
     period: "month",
     yearlyPeriod: "year",
     yearlyId: "plan_R1v1VETXTsHy3p",
-    description: "For large organizations",
+    description: "Large businesses",
     icon: Rocket,
     color: "red",
     features: [
-      "Everything in Premium",
-      "Dedicated Account Manager",
-      "Custom Development",
-      "Enterprise Security",
-      "SLA Guarantee",
-      "Advanced Reporting",
-      "Multi-team Management"
+      "Unlimited Funnels",
+      "Unlimited Automations",
+      "Unlimited Forms & Surveys",
+      "Appointment Booking",
+      "CRM with Unlimited Leads",
+      "Unlimited Pipelines",
+      "Unlimited Courses",
+      "Unlimited Blogs",
+      "Social Media Posts Scheduler",
+      "AI Paid Ads Tracking",
+      "Detailed Reports & Analytics",
+      "A/B Split Testing",
+      "Team Management",
+      "Website Builder",
+      "AI Inbox",
+      "Unlimited Domains",
+      "3000+ Templates",
+      "Link Tracking & Redirections",
+      "AI Agents - Voice, Chat, Content",
+      "GMB Reviews & Messaging",
+      "In-Built WhatsApp API",
+      "Email Marketing",
+      "2 Way Text & Email Conversations",
+      "Reputation Management",
+      "24/7 Priority Support"
     ]
   }
 ];
@@ -75,30 +123,16 @@ export default function Pricing() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
-        <div className="flex justify-between items-center mb-16">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg"></div>
-            <h1 className="text-2xl font-bold text-gray-900">BusinessPro</h1>
-          </div>
-          <Link 
-            to="/login"
-            className="px-4 py-2 bg-white text-gray-700 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors duration-200"
-          >
-            Dashboard Login
-          </Link>
-        </div>
-
         <div className="text-center mb-12">
           <div className="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full mb-4">
-            Simple Pricing
+            Our Pricing Plan
           </div>
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Choose the Perfect Plan for Your Business
+            Choose the Best Plan for Your Business
           </h2>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Start with a 7-day free trial. No credit card required. Cancel anytime.
+            Find the right plan for your needs, with flexible choices and transparent pricing details.
           </p>
-
           <div className="flex items-center justify-center space-x-4 mb-8">
             <span className={`text-lg font-medium ${!isYearly ? 'text-gray-900' : 'text-gray-500'}`}>
               Monthly
@@ -116,7 +150,7 @@ export default function Pricing() {
               />
             </button>
             <span className={`text-lg font-medium ${isYearly ? 'text-gray-900' : 'text-gray-500'}`}>
-              Annual
+              Yearly
             </span>
             {isYearly && (
               <span className="bg-green-100 text-green-800 text-sm font-semibold px-2.5 py-0.5 rounded-full">
@@ -159,24 +193,16 @@ export default function Pricing() {
                     }`}>
                       <IconComponent className="w-8 h-8" />
                     </div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name} Plan</h3>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
+                    
                     <p className="text-gray-600 mb-4">{plan.description}</p>
+                    
                     <div className="flex items-baseline justify-center mb-2">
                       <span className="text-4xl font-bold text-gray-900">{currentPrice}</span>
+                      
                       <span className="text-lg text-gray-500 ml-1">/{currentPeriod}</span>
                     </div>
-                  </div>
-
-                  <ul className="space-y-4 mb-8">
-                    {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-start">
-                        <Check className="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
-                        <span className="text-gray-700">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Link
+                    <Link
                     to={`/payment/${currentPlanId}`}
                     className={`w-full inline-flex items-center justify-center px-6 py-3 rounded-xl text-lg font-semibold transition-all duration-200 ${
                       plan.popular
@@ -188,40 +214,24 @@ export default function Pricing() {
                         : 'bg-gray-900 text-white hover:bg-gray-800'
                     }`}
                   >
-                    Start Free Trial
+                    Get 7 Day Trial
                   </Link>
+                  </div>
+
+                  <ul className="space-y-4 mb-8">
+                    {plan.features.map((feature, index) => (
+                      <li key={index} className="flex items-start">
+                        <Check className="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" />
+                        <span className="text-gray-700">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  
                 </div>
               </div>
             );
           })}
-        </div>
-
-        <div className="text-center mt-12 pb-16">
-          <div className="bg-white rounded-2xl p-8 max-w-2xl mx-auto shadow-lg">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">What happens next?</h3>
-            <div className="grid md:grid-cols-2 gap-6 text-left">
-              <div className="space-y-3">
-                <div className="flex items-center">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                  <span className="text-gray-700">7-day free trial starts immediately</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                  <span className="text-gray-700">Full access to all features</span>
-                </div>
-              </div>
-              <div className="space-y-3">
-                <div className="flex items-center">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                  <span className="text-gray-700">Cancel anytime during the trial</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                  <span className="text-gray-700">Only ₹5 registration fee required</span>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

@@ -37,9 +37,22 @@ export default function FaqSection() {
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white text-center">
       {/* Header */}
       <div className="mb-12">
-        <span className="inline-block px-4 py-1 mb-4 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-pink-500 shadow">
-          Common Question
-        </span>
+        <span
+  style={{
+    display: "inline-block",                   // inline-block
+    padding: "0.25rem 1rem",                   // py-1 px-4
+    marginBottom: "1rem",                      // mb-4
+    borderRadius: "9999px",                    // rounded-full
+    fontSize: "0.875rem",                      // text-sm
+    fontWeight: 600,                           // font-semibold
+    color: "#ffffff",                          // text-white
+    background: "linear-gradient(90deg, #2087FF 0%, #E60CEB 100%)",
+    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)"  // shadow
+  }}
+>
+  Common Question
+</span>
+
         <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
           Frequently Asked Questions
         </h2>

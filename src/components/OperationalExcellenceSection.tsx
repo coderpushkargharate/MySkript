@@ -40,9 +40,23 @@ export default function OperationalExcellenceSection() {
         {/* Left Column */}
         <div className="flex flex-col justify-center">
           {/* Badge */}
-          <div className="inline-block px-4 py-1 mb-4 rounded-full bg-gradient-to-r from-blue-500 to-pink-500 text-white text-sm font-semibold shadow-sm w-fit">
-            Benefits
-          </div>
+          <div
+  style={{
+    display: "inline-block",                   // inline-block
+    padding: "0.25rem 1rem",                   // py-1 px-4
+    marginBottom: "1rem",                      // mb-4
+    borderRadius: "9999px",                    // rounded-full
+background: "linear-gradient(90deg, #2087FF 0%, #E60CEB 100%)",
+    color: "#ffffff",                           // text-white
+    fontSize: "0.875rem",                       // text-sm
+    fontWeight: 600,                            // font-semibold
+    boxShadow: "0 1px 2px rgba(0,0,0,0.05)",   // shadow-sm
+    width: "fit-content"                        // w-fit
+  }}
+>
+  Benefits
+</div>
+
 
           {/* Heading */}
           <h2 className="text-4xl font-bold text-gray-900 mb-4 leading-snug">

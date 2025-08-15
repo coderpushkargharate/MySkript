@@ -10,9 +10,21 @@ export default function CustomerCTA() {
 
       {/* Gradient Badge */}
       <div className="flex justify-center mb-6">
-        <span className="inline-block px-4 py-1 text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-pink-500 rounded-full shadow">
-          Elevate Your Business
-        </span>
+        <span
+  style={{
+    display: "inline-block",                   // inline-block
+    padding: "0.25rem 1rem",                   // py-1 px-4
+    fontSize: "0.875rem",                      // text-sm
+    fontWeight: 600,                           // font-semibold
+    color: "#ffffff",                          // text-white
+    background: "linear-gradient(90deg, #2087FF 0%, #E60CEB 100%)",
+    borderRadius: "9999px",                    // rounded-full
+    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)"  // shadow
+  }}
+>
+  Elevate Your Business
+</span>
+
       </div>
 
       {/* Headline */}
@@ -39,32 +51,19 @@ export default function CustomerCTA() {
       </div>
 
       {/* Floating Avatars */}
+    
       <img
-        src="/emoji1.png"
-        alt="avatar1"
-        width={40}
-        height={40}
-        className="absolute bottom-4 left-10 rounded-full"
-      />
-      <img
-        src="/emoji2.png"
-        alt="avatar2"
-        width={40}
-        height={40}
-        className="absolute top-8 right-10 rounded-full"
-      />
-      <img
-        src="/heart.png"
+        src="https://framerusercontent.com/images/2XVKfhwhceRAzSEr6f0ObtIs9rk.png"
         alt="heart icon"
-        width={16}
-        height={16}
+        width={60}
+        height={60}
         className="absolute top-[90px] right-[90px]"
       />
       <img
-        src="/star.png"
+        src="https://framerusercontent.com/images/sxALcV6xsL5cocZ9EF3Oe6NI18.png"
         alt="star icon"
-        width={16}
-        height={16}
+        width={60}
+        height={60}
         className="absolute bottom-[70px] left-[70px]"
       />
     </section>
