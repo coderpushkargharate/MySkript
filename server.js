@@ -7,16 +7,26 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
-app.use(cors());
-app.use(express.json());
 
-// Razorpay instance
+// ✅ CORS setup
+app.use(
+  cors({
+    origin: "*", // Or replace with your frontend URL
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+// ✅ Razorpay instance (keys from Render env variables)
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || "rzp_live_2GkWNKTX6hpamw",
-  key_secret: process.env.RAZORPAY_KEY_SECRET || "A0QiKnoZGk4vH5OYoKwqvJFe",
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// Plan details (for reference only - no DB)
+// ✅ Body parsers (apply json AFTER webhook route)
+app.use(express.json());
+
+// ✅ Plan details (for reference only)
 const planDetails = {
   "plan_R1uo385RzbRIKA": { name: "Standard Plan", price: "₹4,850", period: "month" },
   "plan_R1uqJGdXsakTwx": { name: "Premium Plan", price: "₹6,450", period: "month" },
@@ -26,7 +36,7 @@ const planDetails = {
   "plan_R1v1VETXTsHy3p": { name: "Enterprise Plan", price: "₹98,500", period: "year" },
 };
 
-// ✅ Create Subscription (with 7-day trial + ₹5 registration fee)
+// ✅ Create Subscription
 app.post("/create-subscription", async (req, res) => {
   const { customer_email, customer_name, customer_phone, plan_id } = req.body;
 
@@ -44,7 +54,6 @@ app.post("/create-subscription", async (req, res) => {
     if (customers.items.length > 0) {
       customer = customers.items[0];
     } else {
-      // Create new customer
       customer = await razorpay.customers.create({
         name: customer_name,
         email: customer_email,
@@ -84,10 +93,6 @@ app.post("/create-subscription", async (req, res) => {
   }
 });
 
-// ❌ Removed: /save-business-info (no DB to save to)
-
-// ❌ Removed: /get-all-subscriptions (no DB)
-
 // ✅ Cancel Subscription
 app.post("/cancel-subscription", async (req, res) => {
   const { subscription_id } = req.body;
@@ -98,7 +103,6 @@ app.post("/cancel-subscription", async (req, res) => {
 
   try {
     const cancelResponse = await razorpay.subscriptions.cancel(subscription_id);
-
     return res.status(200).json({
       success: true,
       message: "Subscription cancelled successfully",
@@ -114,12 +118,27 @@ app.post("/cancel-subscription", async (req, res) => {
   }
 });
 
-// ✅ Webhook (for future use - logs only)
-app.post("/webhook", express.raw({ type: "application/json" }), (req, res) => {
-  const signature = req.headers["x-razorpay-signature"];
-  console.log("Webhook received:", req.body.toString());
-  // ⚠️ In production: verify signature
-  res.status(200).send("OK");
+// ✅ Webhook (place BEFORE express.json())
+app.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  (req, res) => {
+    try {
+      const signature = req.headers["x-razorpay-signature"];
+      console.log("Webhook received:", req.body.toString());
+
+      // ⚠️ TODO: verify signature in production with crypto
+      res.status(200).send("OK");
+    } catch (err) {
+      console.error("Webhook Error:", err.message);
+      res.status(400).send("Webhook error");
+    }
+  }
+);
+
+// ✅ Health check (Render uses it)
+app.get("/", (req, res) => {
+  res.send("🚀 Razorpay Subscription Server Running");
 });
 
 const PORT = process.env.PORT || 5000;
