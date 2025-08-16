@@ -11,7 +11,7 @@ const app = express();
 // ✅ CORS setup
 app.use(
   cors({
-    origin: "*", // Or replace with your frontend URL
+    origin: "https://lavender-kudu-823656.hostingersite.com/", // Or replace with your frontend URL
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })

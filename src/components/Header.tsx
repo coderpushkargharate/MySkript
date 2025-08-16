@@ -18,7 +18,7 @@ export default function Header() {
         {/* Logo */}
         <a href="/" className="flex items-center space-x-2">
           <img
-            src="/img/Myskript Logos.png"
+            src="./assets/img/Myskript Logos.png"
             alt="myskript logo"
             className="h-10 w-auto"
           />

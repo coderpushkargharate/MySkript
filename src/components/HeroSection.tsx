@@ -77,15 +77,15 @@ export default function HeroSection() {
         {/* Benefits */}
         <div className="flex flex-wrap justify-center gap-6 text-sm font-medium text-gray-700 mb-6">
           <div className="flex items-center gap-2">
-            <img src="/img/y8BBNbAsFSb2eCv8Of7CxxTLGOc.svg" alt="support" width="20" height="20" />
+            <img src="./assets/img/y8BBNbAsFSb2eCv8Of7CxxTLGOc.svg" alt="support" width="20" height="20" />
             24*7 Support
           </div>
           <div className="flex items-center gap-2">
-            <img src="/img/y8BBNbAsFSb2eCv8Of7CxxTLGOc.svg" alt="secure" width="20" height="20" />
+            <img src="./assets/img/y8BBNbAsFSb2eCv8Of7CxxTLGOc.svg" alt="secure" width="20" height="20" />
             Secure Data
           </div>
           <div className="flex items-center gap-2">
-            <img src="/img/y8BBNbAsFSb2eCv8Of7CxxTLGOc.svg" alt="custom" width="20" height="20" />
+            <img src="./assets/img/y8BBNbAsFSb2eCv8Of7CxxTLGOc.svg" alt="custom" width="20" height="20" />
             Customizable
           </div>
         </div>
@@ -151,18 +151,18 @@ export default function HeroSection() {
   <div className="animate-scroll w-[200%]">
     {/* First batch */}
     <div className="flex w-1/2 flex-shrink-0 items-center gap-8">
-      <img src="/img/Color Logos/Logo 1.png" alt="brand" width="120" height="60" />
-      <img src="/img/Color Logos/Logo 2.png" alt="brand" width="120" height="60" />
-      <img src="/img/Color Logos/Logo 3.png" alt="brand" width="120" height="60" />
-      <img src="/img/Color Logos/Logo 4.png" alt="brand" width="120" height="60" />
+      <img src="./assets/img/Color Logos/Logo 1.png" alt="brand" width="120" height="60" />
+      <img src="./assets/img/Color Logos/Logo 2.png" alt="brand" width="120" height="60" />
+      <img src="./assets/img/Color Logos/Logo 3.png" alt="brand" width="120" height="60" />
+      <img src="./assets/img/Color Logos/Logo 4.png" alt="brand" width="120" height="60" />
     </div>
 
     {/* Second batch */}
     <div className="flex w-1/2 flex-shrink-0 items-center gap-8">
-      <img src="/img/Color Logos/Logo 1.png" alt="brand" width="120" height="60" />
-      <img src="/img/Color Logos/Logo 2.png" alt="brand" width="120" height="60" />
-      <img src="/img/Color Logos/Logo 3.png" alt="brand" width="120" height="60" />
-      <img src="/img/Color Logos/Logo 4.png" alt="brand" width="120" height="60" />
+      <img src="./assets/img/Color Logos/Logo 1.png" alt="brand" width="120" height="60" />
+      <img src="./assets/img/Color Logos/Logo 2.png" alt="brand" width="120" height="60" />
+      <img src="./assets/img/Color Logos/Logo 3.png" alt="brand" width="120" height="60" />
+      <img src="./assets/img/Color Logos/Logo 4.png" alt="brand" width="120" height="60" />
     </div>
   </div>
 </div>
@@ -200,7 +200,7 @@ export default function HeroSection() {
   }}
 >
   <img
-    src="/img/gDhp3w4pA74orElh0c2VuCs3Z8.png"
+    src="./assets/img/gDhp3w4pA74orElh0c2VuCs3Z8.png"
     alt="stats2"
     width="260"
     height="160"

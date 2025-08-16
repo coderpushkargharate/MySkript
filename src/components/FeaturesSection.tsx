@@ -83,7 +83,7 @@ export default function FeaturesSection() {
 
         <div className="md:w-1/2 flex justify-center">
           <img
-            src="/img/F1- Drag Drop Web Builder.png"
+            src="./assets/img/F1- Drag Drop Web Builder.png"
             alt="Fully responsive websites"
             className="rounded-xl  max-w-full"
           />
@@ -94,7 +94,7 @@ export default function FeaturesSection() {
       <div className="flex flex-col md:flex-row items-center bg-gray-100 rounded-3xl p-8 shadow-lg">
         <div className="md:w-1/2 flex justify-center">
           <img
-            src="/img/2. automations.png"
+            src="./assets/img/2. automations.png"
             alt="Automation preview"
             className="rounded-xl  max-w-full"
           />
@@ -163,7 +163,7 @@ export default function FeaturesSection() {
   {/* Image */}
   <div className="md:w-1/2 flex justify-center">
     <img
-      src="/img/3. Feed AI.png"
+      src="./assets/img/3. Feed AI.png"
       alt="Feed AI by AD Tracking Diagram"
       className="rounded-xl  max-w-full"
     />
@@ -175,7 +175,7 @@ export default function FeaturesSection() {
   {/* Image */}
   <div className="md:w-1/2 flex justify-center">
     <img
-      src="/img/4. Opportunity Pipelines.png"
+      src="./assets/img/4. Opportunity Pipelines.png"
       alt="Opportunity Pipelines Diagram"
       className="rounded-xl max-w-full"
     />
@@ -240,7 +240,7 @@ export default function FeaturesSection() {
   {/* Right Image */}
   <div className="md:w-1/2 flex justify-center">
     <img
-      src="/img/5. Membership & Courses.png"
+      src="./assets/img/5. Membership & Courses.png"
       alt="Membership and Courses Dashboard"
       className="rounded-xl max-w-full"
     />
@@ -254,7 +254,7 @@ export default function FeaturesSection() {
   {/* Left: Image */}
   <div className="md:w-1/2 flex justify-center mb-8 md:mb-0">
     <img
-      src="/img/6. All in One Team Inbox.png"
+      src="./assets/img/6. All in One Team Inbox.png"
       alt="All in One Team Inbox Preview"
       className="rounded-xl max-w-full"
     />
@@ -323,7 +323,7 @@ export default function FeaturesSection() {
   {/* Right Image */}
   <div className="md:w-1/2 flex justify-center">
     <img
-      src="/img/7. CRM.png"
+      src="./assets/img/7. CRM.png"
       alt="CRM System Preview"
       className="rounded-xl max-w-full"
     />
@@ -336,7 +336,7 @@ export default function FeaturesSection() {
   {/* Left Image */}
   <div className="md:w-1/2 flex justify-center mb-8 md:mb-0">
     <img
-      src="public/img/8. Email Maketing.png"
+      src="/assets/img/8. Email Maketing.png"
       alt="Email Marketing Builder Preview"
       className="rounded-xl max-w-full"
     />
@@ -407,7 +407,7 @@ export default function FeaturesSection() {
   {/* Right Image */}
   <div className="md:w-1/2 flex justify-center">
     <img
-      src="/img/9. Social Planner.png"
+      src="./assets/img/9. Social Planner.png"
       alt="Social Planner and Content Scheduling Preview"
       className="rounded-xl max-w-full"
     />
@@ -419,7 +419,7 @@ export default function FeaturesSection() {
   {/* Left Image */}
   <div className="md:w-1/2 flex justify-center mb-8 md:mb-0">
     <img
-      src="/img/12. Whatsapp.png"
+      src="./assets/img/12. Whatsapp.png"
       alt="WhatsApp Automation Preview"
       className="rounded-xl max-w-full"
     />
@@ -458,7 +458,7 @@ export default function FeaturesSection() {
   {/* Left Image */}
   <div className="md:w-1/2 flex justify-center mb-8 md:mb-0">
     <img
-      src="/img/10. Calender Booking.png"
+      src="./assets/img/10. Calender Booking.png"
       alt="Calendar Booking Feature"
       className="rounded-xl max-w-full"
     />

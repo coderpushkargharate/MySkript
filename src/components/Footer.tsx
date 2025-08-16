@@ -8,7 +8,7 @@ export default function Footer() {
         {/* Company Info */}
         <div>
           <div className="flex items-center gap-2 mb-4">
-            <img src="/img/Myskript Logos.png" alt="myskript logo" width={100} height={100} />
+            <img src="./assets/img/Myskript Logos.png" alt="myskript logo" width={100} height={100} />
             
           </div>
           <p className="mb-4">
