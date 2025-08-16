@@ -8,14 +8,15 @@ dotenv.config();
 
 const app = express();
 
-// ✅ CORS setup
 app.use(
   cors({
-    origin: "https://lavender-kudu-823656.hostingersite.com/", // Or replace with your frontend URL
+    origin: "https://lavender-kudu-823656.hostingersite.com", // remove trailing slash
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true, // optional if you need cookies
   })
 );
+
 
 // ✅ Razorpay instance (keys from Render env variables)
 const razorpay = new Razorpay({
