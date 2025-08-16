@@ -2,7 +2,7 @@ import React from "react";
 
 export default function FeaturesSection() {
   return (
-    <section className="bg-white py-16 px-4 md:px-60 space-y-16">
+    <section className="bg-white py-16 px-4 md:px-60 space-y-16" >
       <div className="text-center mb-12 px-5">
        <span
   style={{

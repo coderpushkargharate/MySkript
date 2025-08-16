@@ -16,11 +16,11 @@ import WhyChooseUs from './WhyChooseUs';
 export default function HeroSection() {
   return (
     <>
-    <section className="relative overflow-hidden bg-white pt-16 pb-10 sm:pt-50 lg:pt-32">
+    <section className="relative overflow-hidden bg-white pt-16 pb-10 sm:pt-10 lg:pt-32 ">
       {/* Top Gradient */}
       <div className="absolute top-0 left-0 w-[300px] h-[300px] bg-orange-100 blur-[120px] rounded-full opacity-60 z-0" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+<div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mt-10 lg:mt-2">
         {/* Badge */}
        <div 
   style={{

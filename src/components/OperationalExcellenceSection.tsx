@@ -35,7 +35,7 @@ const features = [
 
 export default function OperationalExcellenceSection() {
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-white" id="benefits">
       <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* Left Column */}
         <div className="flex flex-col justify-center">

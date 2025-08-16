@@ -15,96 +15,56 @@ export default function IntegrationsSection() {
   ];
 
   return (
-<section className="bg-gradient-to-b from-[#F3F3F1] to-[#F9F9F6] py-16 rounded-3xl mx-40">
-      <div className="max-w-5xl mx-auto px-6 text-center">
-        {/* 🔹 Top Carousel (scroll right) */}
+    <section className="bg-gradient-to-b from-[#F3F3F1] to-[#F9F9F6] py-12 md:py-16 rounded-3xl px-4 md:px-10 lg:px-20" id="integrations">
+      <div className="max-w-6xl mx-auto text-center">
+        {/* Top Carousel */}
         <div className="overflow-hidden relative w-full mb-6">
-          <div className="flex animate-scroll-right gap-8">
+          <div className="flex gap-6 md:gap-8 animate-scroll-right">
             {icons.concat(icons).map((icon, i) => (
-              <div
-                key={`top-${i}`}
-                className="w-20 h-20 flex-shrink-0 flex items-center justify-center animate-rotate-slow"
-              >
-                <img
-                  src={icon}
-                  alt={`Integration ${i}`}
-                  className="w-30 h-30 object-contain"
-                />
+              <div key={`top-${i}`} className="w-16 h-16 md:w-20 md:h-20 flex-shrink-0 flex items-center justify-center animate-rotate-slow">
+                <img src={icon} alt={`Integration ${i}`} className="w-12 h-12 md:w-16 md:h-16 object-contain" />
               </div>
             ))}
           </div>
         </div>
 
-        {/* 🔹 Bottom Carousel (scroll left) */}
-        <div className="overflow-hidden relative w-full mb-8">
-          <div className="flex animate-scroll-left gap-8">
+        {/* Bottom Carousel */}
+        <div className="overflow-hidden relative w-full mb-6">
+          <div className="flex gap-6 md:gap-8 animate-scroll-left">
             {icons.concat(icons).map((icon, i) => (
-              <div
-                key={`bottom-${i}`}
-                className="w-20 h-20 flex-shrink-0  flex items-center justify-center animate-rotate-slow"
-              >
-                <img
-                  src={icon}
-                  alt={`Integration ${i}`}
-                  className="w-30 h-30 object-contain"
-                />
+              <div key={`bottom-${i}`} className="w-16 h-16 md:w-20 md:h-20 flex-shrink-0 flex items-center justify-center animate-rotate-slow">
+                <img src={icon} alt={`Integration ${i}`} className="w-12 h-12 md:w-16 md:h-16 object-contain" />
               </div>
             ))}
           </div>
         </div>
 
         {/* Badge */}
-        <button
-          style={{
-            background: "linear-gradient(90deg, #2087FF 0%, #E60CEB 100%)",
-            color: "#ffffff",
-            padding: "0.5rem 1.25rem",
-            borderRadius: "9999px",
-            fontSize: "0.875rem",
-            fontWeight: 600,
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
+        <button className="bg-gradient-to-r from-[#2087FF] to-[#E60CEB] text-white py-2 px-6 rounded-full font-semibold text-sm md:text-base mb-4">
           Integration
         </button>
 
         {/* Heading */}
-        <h2 className="text-4xl font-bold mt-4">Connect with 200+ Platforms</h2>
-        <p className="text-gray-600 mt-4 max-w-xl mx-auto">
-          Connect your favorite tools effortlessly. Our platform plays well with
-          others, creating a unified ecosystem for your business.
+        <h2 className="text-2xl md:text-4xl font-bold mt-2 md:mt-4">Connect with 200+ Platforms</h2>
+        <p className="text-gray-600 mt-2 md:mt-4 max-w-2xl md:max-w-xl mx-auto text-sm md:text-base">
+          Connect your favorite tools effortlessly. Our platform plays well with others, creating a unified ecosystem for your business.
         </p>
       </div>
 
-      {/* 🔹 Animation Styles */}
+      {/* Animation Styles */}
       <style jsx>{`
         @keyframes scroll-left {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
         }
         @keyframes scroll-right {
-          0% {
-            transform: translateX(-50%);
-          }
-          100% {
-            transform: translateX(0);
-          }
+          0% { transform: translateX(-50%); }
+          100% { transform: translateX(0); }
         }
-        .animate-scroll-left {
-          animation: scroll-left 20s linear infinite;
-        }
-        .animate-scroll-right {
-          animation: scroll-right 20s linear infinite;
-        }
-      
-        .animate-rotate-slow {
-          animation: rotate-slow 10s linear infinite;
-        }
+        .animate-scroll-left { animation: scroll-left 20s linear infinite; }
+        .animate-scroll-right { animation: scroll-right 20s linear infinite; }
+        @keyframes rotate-slow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .animate-rotate-slow { animation: rotate-slow 10s linear infinite; }
       `}</style>
     </section>
   );

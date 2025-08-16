@@ -36,7 +36,7 @@ const features = [
 
 export default function UsefulFeaturesSection() {
   return (
-    <section className="py-20 bg-[#fcfcf8]">
+    <section className="py-20 bg-[#fcfcf8]" id="features">
       <div className="max-w-7xl mx-auto px-4 text-center">
         <div
   style={{
