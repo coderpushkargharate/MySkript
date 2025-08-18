@@ -1,28 +1,72 @@
 export default function IntegrationsSection() {
   const icons = [
-    "https://framerusercontent.com/images/YqokzQe8hxLqWZy51izpk84wz0.svg",
-    "https://framerusercontent.com/images/3n2vGVjSe67AkSOLwTm0j4yJz5I.svg",
-    "https://framerusercontent.com/images/BppxHaDPl8JyF2O27Z4NrupPIpk.svg",
-    "https://framerusercontent.com/images/FSi21nwHje6xlXG1MrSFXTLsEuY.svg",
-    "https://framerusercontent.com/images/NLnjLidQC5P5PjdfB1rR97MUQs.svg",
-    "https://framerusercontent.com/images/01BElrVh0E4ojNnPeHc66Ku0s.svg",
-    "https://framerusercontent.com/images/mGr4Tt5M0nAejf4Ru6vs7MjuAc.svg",
-    "https://framerusercontent.com/images/mk0APUDFOMtruuP7LHQLYOZ4E.svg",
-    "https://framerusercontent.com/images/w0RPDldWn6ds51i13PDGlCxGIQE.svg",
-    "https://framerusercontent.com/images/GAWEdqLHtW4lrHSbPpl08qtCOi4.svg",
-    "https://framerusercontent.com/images/aS19EPoC2eN0qKQsqsUYvSrgTM.svg",
-    "https://framerusercontent.com/images/aRMQCzNjKdJxVXxCA5n01s37e4M.svg",
+    "/assets/Transparent Icons/1.png",
+    "/assets/Transparent Icons/2.png",
+    "/assets/Transparent Icons/3.png",
+    "/assets/Transparent Icons/4.png",
+    "/assets/Transparent Icons/5.png",
+    "/assets/Transparent Icons/6.png",
+    "/assets/Transparent Icons/7.png",
+    "/assets/Transparent Icons/8.png",
+    "/assets/Transparent Icons/9.png",
+    "/assets/Transparent Icons/10.png",
+    "/assets/Transparent Icons/11.png",
+    "/assets/Transparent Icons/12.png",
+    "/assets/Transparent Icons/13.png",
+    "/assets/Transparent Icons/14.png",
+    "/assets/Transparent Icons/15.png",
+    "/assets/Transparent Icons/16.png",
+    "/assets/Transparent Icons/17.png",
+    "/assets/Transparent Icons/18.png",
+    "/assets/Transparent Icons/19.png",
+    "/assets/Transparent Icons/20.png",
+    "/assets/Transparent Icons/21.png",
+    "/assets/Transparent Icons/22.png",
+    "/assets/Transparent Icons/23.png",
+    "/assets/Transparent Icons/24.png",
+    "/assets/Transparent Icons/25.png",
+    "/assets/Transparent Icons/26.png",
+    "/assets/Transparent Icons/27.png",
+    "/assets/Transparent Icons/28.png",
+    "/assets/Transparent Icons/29.png",
+    "/assets/Transparent Icons/30.png",
+    "/assets/Transparent Icons/31.png",
+    "/assets/Transparent Icons/32.png",
+    "/assets/Transparent Icons/33.png",
+    "/assets/Transparent Icons/34.png",
+    "/assets/Transparent Icons/35.png",
+    "/assets/Transparent Icons/36.png",
+    "/assets/Transparent Icons/37.png",
+    "/assets/Transparent Icons/38.png",
+    "/assets/Transparent Icons/39.png",
+    "/assets/Transparent Icons/40.png",
+    "/assets/Transparent Icons/41.png",
+    "/assets/Transparent Icons/42.png",
+    "/assets/Transparent Icons/43.png",
+    "/assets/Transparent Icons/44.png",
+    "/assets/Transparent Icons/45.png",
+    "/assets/Transparent Icons/46.png",
+    "/assets/Transparent Icons/47.png",
+    "/assets/Transparent Icons/48.png",
+    "/assets/Transparent Icons/49.png",
+    "/assets/Transparent Icons/50.png",
+    "/assets/Transparent Icons/51.png",
+    "/assets/Transparent Icons/52.png",
+    "/assets/Transparent Icons/53.png",
+    "/assets/Transparent Icons/54.png",
+    "/assets/Transparent Icons/55.png",
+   
   ];
 
   return (
-    <section className="bg-gradient-to-b from-[#F3F3F1] to-[#F9F9F6] py-12 md:py-16 rounded-3xl px-4 md:px-10 lg:px-20" id="integrations">
-      <div className="max-w-6xl mx-auto text-center">
+    <section className="bg-gradient-to-b from-[#F3F3F1] to-[#F9F9F6] py-12 md:py-16 rounded-3xl px-4 md:px-10 lg:px-20 lg:mx-60" id="integrations">
+      <div className="max-w-5xl mx-auto text-center">
         {/* Top Carousel */}
         <div className="overflow-hidden relative w-full mb-6">
-          <div className="flex gap-6 md:gap-8 animate-scroll-right">
+          <div className="flex gap-6 md:gap-10 animate-scroll-right">
             {icons.concat(icons).map((icon, i) => (
               <div key={`top-${i}`} className="w-16 h-16 md:w-20 md:h-20 flex-shrink-0 flex items-center justify-center animate-rotate-slow">
-                <img src={icon} alt={`Integration ${i}`} className="w-12 h-12 md:w-16 md:h-16 object-contain" />
+                <img src={icon} alt={`Integration ${i}`} className="w-12 h-12 md:w-20 md:h-20 object-contain" />
               </div>
             ))}
           </div>
@@ -30,10 +74,10 @@ export default function IntegrationsSection() {
 
         {/* Bottom Carousel */}
         <div className="overflow-hidden relative w-full mb-6">
-          <div className="flex gap-6 md:gap-8 animate-scroll-left">
+          <div className="flex gap-6 md:gap-10 animate-scroll-left">
             {icons.concat(icons).map((icon, i) => (
               <div key={`bottom-${i}`} className="w-16 h-16 md:w-20 md:h-20 flex-shrink-0 flex items-center justify-center animate-rotate-slow">
-                <img src={icon} alt={`Integration ${i}`} className="w-12 h-12 md:w-16 md:h-16 object-contain" />
+                <img src={icon} alt={`Integration ${i}`} className="w-12 h-12 md:w-20 md:h-20 object-contain" />
               </div>
             ))}
           </div>
@@ -63,8 +107,7 @@ export default function IntegrationsSection() {
         }
         .animate-scroll-left { animation: scroll-left 20s linear infinite; }
         .animate-scroll-right { animation: scroll-right 20s linear infinite; }
-        @keyframes rotate-slow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .animate-rotate-slow { animation: rotate-slow 10s linear infinite; }
+      
       `}</style>
     </section>
   );

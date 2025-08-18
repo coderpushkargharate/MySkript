@@ -38,8 +38,10 @@ const plans = [
   {
     id: "plan_R1uo385RzbRIKA",
     name: "Standard Plan",
-    price: "₹4,850",
-    yearlyPrice: "₹48,500",
+    originalPrice: "₹5850", // Original monthly price
+    originalYearlyPrice: "₹69,000", // Original yearly price
+    price: "₹4850", // After 40% off monthly
+    yearlyPrice: "₹48,500", // After 20% off yearly
     period: "month",
     yearlyPeriod: "year",
     yearlyId: "plan_R1usIilBLpME0T",
@@ -79,7 +81,9 @@ const plans = [
   {
     id: "plan_R1uqJGdXsakTwx",
     name: "Premium Plan",
-    price: "₹6,450",
+    originalPrice: "₹7750",
+    originalYearlyPrice: "₹92,000",
+    price: "₹6450",
     yearlyPrice: "₹64,500",
     period: "month",
     yearlyPeriod: "year",
@@ -89,7 +93,7 @@ const plans = [
     color: "purple",
     popular: true,
     features: {
-      ...allFeatures.reduce((acc, f) => ({ ...acc, [f]: false }), {}), // default false
+      ...allFeatures.reduce((acc, f) => ({ ...acc, [f]: false }), {}),
       "Unlimited Funnels": true,
       "Unlimited Automations": true,
       "Unlimited Forms & Surveys": true,
@@ -119,7 +123,9 @@ const plans = [
   {
     id: "plan_R1uqvnksOBtSEH",
     name: "Enterprise Plan",
-    price: "₹9,850",
+    originalPrice: "₹11850",
+    originalYearlyPrice: "₹141,000",
+    price: "₹9850",
     yearlyPrice: "₹98,500",
     period: "month",
     yearlyPeriod: "year",
@@ -128,7 +134,7 @@ const plans = [
     icon: Rocket,
     color: "red",
     features: {
-      ...allFeatures.reduce((acc, f) => ({ ...acc, [f]: true }), {}), // Enterprise has all
+      ...allFeatures.reduce((acc, f) => ({ ...acc, [f]: true }), {}),
       "Wordpress": true,
       "Ads Manager": true
     }
@@ -152,31 +158,35 @@ export default function Pricing() {
             Find the right plan for your needs, with flexible choices and transparent pricing details.
           </p>
 
-          <div className="flex items-center justify-center space-x-4 mb-8">
-            <span className={`text-lg font-medium ${!isYearly ? "text-gray-900" : "text-gray-500"}`}>
-              Monthly
-            </span>
-            <button
-              onClick={() => setIsYearly(!isYearly)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                isYearly ? "bg-blue-600" : "bg-gray-200"
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  isYearly ? "translate-x-6" : "translate-x-1"
-                }`}
-              />
-            </button>
-            <span className={`text-lg font-medium ${isYearly ? "text-gray-900" : "text-gray-500"}`}>
-              Yearly
-            </span>
-            {isYearly && (
-              <span className="bg-green-100 text-green-800 text-sm font-semibold px-2.5 py-0.5 rounded-full">
-                Save 20%
-              </span>
-            )}
-          </div>
+         <div className="flex items-center justify-center space-x-4 mb-8">
+  <button
+    onClick={() => setIsYearly(false)}
+    className={`relative inline-flex h-10 px-6 py-2 rounded-full text-sm font-medium transition-colors ${
+      !isYearly
+        ? 'bg-blue-600 text-white'
+        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+    }`}
+  >
+    Monthly
+    <span className="ml-2 bg-orange-100 text-orange-800 text-xs font-semibold px-2 py-0.5 rounded-full">
+      Save 20%
+    </span>
+  </button>
+
+  <button
+    onClick={() => setIsYearly(true)}
+    className={`relative inline-flex h-10 px-6 py-2 rounded-full text-sm font-medium transition-colors ${
+      isYearly
+        ? 'bg-blue-600 text-white'
+        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+    }`}
+  >
+    Yearly
+    <span className="ml-2 bg-orange-100 text-orange-800 text-xs font-semibold px-2 py-0.5 rounded-full">
+      Save 44%
+    </span>
+  </button>
+</div>
         </div>
 
         {/* Pricing Cards */}
@@ -184,6 +194,7 @@ export default function Pricing() {
           {plans.map((plan) => {
             const Icon = plan.icon;
             const currentPrice = isYearly ? plan.yearlyPrice : plan.price;
+            const currentOriginalPrice = isYearly ? plan.originalYearlyPrice : plan.originalPrice;
             const currentPeriod = isYearly ? plan.yearlyPeriod : plan.period;
             const currentPlanId = isYearly ? plan.yearlyId : plan.id;
 
@@ -217,10 +228,13 @@ export default function Pricing() {
                     </div>
                     <h3 className="text-2xl font-bold">{plan.name}</h3>
                     <p className="text-gray-600">{plan.description}</p>
+
                     <div className="flex items-baseline justify-center mt-4">
+                      <span className="text-lg text-gray-500 line-through mr-2">{currentOriginalPrice}</span>
                       <span className="text-4xl font-bold">{currentPrice}</span>
                       <span className="text-lg text-gray-500 ml-1">/{currentPeriod}</span>
                     </div>
+
                     <Link
                       to={`/payment/${currentPlanId}`}
                       className="mt-4 w-full inline-flex justify-center px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700"
@@ -238,9 +252,7 @@ export default function Pricing() {
                         ) : (
                           <X className="w-5 h-5 text-gray-400 mr-3 mt-0.5" />
                         )}
-                        <span className={plan.features[feature] ? "text-gray-700" : "text-gray-400"}>
-                          {feature}
-                        </span>
+                        <span className={plan.features[feature] ? "text-gray-700" : "text-gray-400"}>{feature}</span>
                       </li>
                     ))}
                   </ul>

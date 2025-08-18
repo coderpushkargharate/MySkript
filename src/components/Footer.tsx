@@ -1,77 +1,71 @@
-import { Link } from "react-router-dom";
+
 
 export default function Footer() {
   return (
-    <footer className="bg-[#fdfcf9] text-gray-800 pt-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-10 pb-12">
-        
-        {/* Company Info */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <img 
-              src="./assets/img/Myskript Logos.png" 
-              alt="myskript logo" 
-              width={100} 
-              height={100} 
-              className="object-contain"
-            />
+    <footer className="bg-[#fdfdfb] px-8 md:px-40 pt-12 pb-6">
+      <div className="flex flex-col md:flex-row justify-between gap-10">
+        {/* Left Side */}
+        <div className="max-w-sm">
+          <div className="mb-4">
+            <img src="/assets/img/Myskript Logos.png" alt="Myskript Logo" width={150} height={40} />
           </div>
-          <p className="text-gray-700 leading-relaxed text-sm">
-            Myskript Infotech <br />
-            Streamline workflows and grow your business with effective lead management.
+          <h3 className="text-[20px]  mb-2">Myskript Infotech</h3>
+          <p className="text-lg text-gray-600 leading-relaxed">
+            Streamline workflows and grow your business<br />
+            with effective lead management.
           </p>
-          <p className="font-medium text-sm text-black">connect@myskript.io</p>
-        </div>
-
-        {/* Features */}
-        <div>
-          <h3 className="font-semibold text-gray-900 mb-4">Features</h3>
-          <ul className="space-y-2 text-sm text-gray-600">
-            <li><Link className="hover:text-gray-900 transition-colors" to="#">CRM</Link></li>
-            <li><Link className="hover:text-gray-900 transition-colors" to="#">Automations</Link></li>
-            <li><Link className="hover:text-gray-900 transition-colors" to="#">Funnels</Link></li>
-            <li><Link className="hover:text-gray-900 transition-colors" to="#">Webinars</Link></li>
-            <li><Link className="hover:text-gray-900 transition-colors" to="#">&amp; Many More</Link></li>
-            <li><Link className="hover:text-gray-900 transition-colors" to="#">Get A Trial</Link></li>
-          </ul>
-        </div>
-
-        {/* Pages */}
-        <div>
-          <h3 className="font-semibold text-gray-900 mb-4">Pages</h3>
-          <ul className="space-y-2 text-sm text-gray-600">
-            <li><Link className="hover:text-gray-900 transition-colors" to="#">Features</Link></li>
-            <li><Link className="hover:text-gray-900 transition-colors" to="#">Benefits</Link></li>
-            <li><Link className="hover:text-gray-900 transition-colors" to="#">Pricing</Link></li>
-            <li><Link className="hover:text-gray-900 transition-colors" to="#">Clients</Link></li>
-            <li><Link className="hover:text-gray-900 transition-colors" to="#">Integrations</Link></li>
-            <li><Link className="hover:text-gray-900 transition-colors" to="#">Privacy Policy</Link></li>
-          </ul>
-        </div>
-
-        {/* Social & Login */}
-        <div className="space-y-3">
-          <h3 className="font-semibold text-gray-900 mb-4">Social</h3>
-          <ul className="space-y-2 text-sm text-gray-600">
-            <li><Link className="hover:text-gray-900 transition-colors" to="#">Instagram</Link></li>
-            <li><Link className="hover:text-gray-900 transition-colors" to="#">LinkedIn</Link></li>
-            <li><Link className="hover:text-gray-900 transition-colors" to="#">Facebook</Link></li>
-          </ul>
-          <Link 
-            to="/login"
-            className="inline-block mt-4 px-5 py-2 bg-white text-gray-700 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors duration-200"
+          <a
+            href="mailto:connect@myskript.io"
+            className="mt-4 text-lg block font-semibold text-black"
           >
-            Dashboard Login
-          </Link>
+            connect@myskript.io
+          </a>
+        </div>
+
+        {/* Right Side */}
+        <div className="flex flex-col sm:flex-row gap-20">
+          {/* Features */}
+          <div>
+            <h4 className="text-[16px] font-semibold mb-4">Features</h4>
+            <ul className="space-y-2 text-lg text-gray-600">
+              <li><a href="#">CRM</a></li>
+              <li><a href="#">Automations</a></li>
+              <li><a href="#">Funnels</a></li>
+              <li><a href="#">Webinars</a></li>
+              <li><a href="#">And Many More</a></li>
+              <li><a href="#">Get A Trial</a></li>
+            </ul>
+          </div>
+
+          {/* Pages */}
+          <div>
+            <h4 className="text-[16px] font-semibold mb-4">Pages</h4>
+            <ul className="space-y-2 text-lg text-gray-600">
+              <li><a href="#">Features</a></li>
+              <li><a href="#">Benefits</a></li>
+              <li><a href="#">Pricing</a></li>
+              <li><a href="#">Clients</a></li>
+              <li><a href="#">Integrations</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+            </ul>
+          </div>
+
+          {/* Social */}
+          <div>
+            <h4 className="text-[16px] font-semibold mb-4">Social</h4>
+            <ul className="space-y-2 text-lg text-gray-600">
+              <li><a href="#">Instagram</a></li>
+              <li><a href="#">LinkedIn</a></li>
+              <li><a href="#">Facebook</a></li>
+            </ul>
+          </div>
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-gray-200 pt-6 pb-8 text-sm text-gray-500 text-center">
-        <div className="flex flex-col sm:flex-row justify-center sm:justify-between items-center max-w-7xl mx-auto px-4 gap-2">
-          <p className="hover:text-gray-900 cursor-pointer transition-colors">Terms & Conditions</p>
-          <p>&copy; 2025 Myskript Infotech. All rights reserved.</p>
-        </div>
+      {/* Bottom Line */}
+      <div className="border-t border-gray-200 mt-10 pt-4 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
+        <a href="#" className="mb-2 md:mb-0">Terms & Conditions</a>
+        <p>©2025 Copyright Myskript Infotech. All rights reserved.</p>
       </div>
     </footer>
   );

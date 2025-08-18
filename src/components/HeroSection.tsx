@@ -55,7 +55,7 @@ export default function HeroSection() {
     {/* Heading */}
 <h1
   style={{
-    fontSize: "3.25rem", // base size (text-4xl)
+    fontSize: "3.50rem", // base size (text-4xl)
     fontWeight: 700,
     color: "#111827", // Tailwind's gray-900
     lineHeight: "1.2",

@@ -1,3 +1,4 @@
+
 import React from "react";
 
 export default function FeaturesSection() {
@@ -49,9 +50,18 @@ export default function FeaturesSection() {
       <div className="flex flex-col md:flex-row items-center bg-gray-100 rounded-3xl p-8 shadow-lg">
         <div className="md:w-1/2 mb-8 md:mb-0">
           <p className="text-xs font-bold text-gray-700 mb-2">BEAUTIFUL FUNNELS, WEBSITES, BLOGS</p>
-          <h3 className="text-3xl md:text-4xl font-bold text-purple-700 leading-tight mb-4">
-            Easiest Drag & Drop <br /> Funnel, Web Builder
-          </h3>
+          <h2   style={{
+    fontSize: '2.5rem', // text-3xl (30px)
+    fontWeight: 'bold',
+    marginBottom: '1rem', // mb-4
+    backgroundImage: 'linear-gradient(to right, #2e7af5ff, #8b5cf6, #7513c5ff)', // from-blue-500 via-purple-500 to-purple-700
+    WebkitBackgroundClip: 'text',
+    color: 'transparent',
+  }}
+>
+  Easiest Drag & Drop <br /> Funnel, Web Builder
+</h2>
+
           <p className="text-gray-700 mb-4">
             Simple and easy to use drag & drop page builder we can use to create
             World class Funnels & Landing Pages within no time
@@ -101,9 +111,16 @@ export default function FeaturesSection() {
         </div>
         <div className="md:w-1/2 mb-8 md:mb-0">
           <p className="text-xs font-bold text-gray-700 mb-2 uppercase">Automation At Your Finger Tip</p>
-          <h3 className="text-3xl md:text-4xl font-bold text-purple-700 leading-tight mb-4">
+          <h2 style={{
+    fontSize: '2.5rem', // text-3xl (30px)
+    fontWeight: 'bold',
+    marginBottom: '1rem', // mb-4
+    backgroundImage: 'linear-gradient(to right, #2e7af5ff, #8b5cf6, #7513c5ff)', // from-blue-500 via-purple-500 to-purple-700
+    WebkitBackgroundClip: 'text',
+    color: 'transparent',
+  }}>
             Automations
-          </h3>
+          </h2>
           <p className="text-gray-700 mb-4">
             Automate anything – Make your business processes a lot more automated
             with our training and reduce manual and repetitive tasks by at least 60%
@@ -139,9 +156,16 @@ export default function FeaturesSection() {
   {/* Content */}
   <div className="md:w-1/2 mb-8 md:mb-0">
     <p className="text-xs font-bold text-gray-700 mb-2 uppercase">#1 AD TRACKING AND AI OPTIMISATION</p>
-    <h3 className="text-3xl md:text-4xl font-bold text-purple-700 leading-tight mb-4">
+    <h2 style={{
+    fontSize: '2.5rem', // text-3xl (30px)
+    fontWeight: 'bold',
+    marginBottom: '1rem', // mb-4
+    backgroundImage: 'linear-gradient(to right, #2e7af5ff, #8b5cf6, #7513c5ff)', // from-blue-500 via-purple-500 to-purple-700
+    WebkitBackgroundClip: 'text',
+    color: 'transparent',
+  }}>
       Feed AI by AD Tracking
-    </h3>
+    </h2>
     <p className="text-gray-700 mb-4">
       With Myskript's Exclusive Ad Tracking AI System, get at least 20% increase in ROI by feeding data back to Facebook and Google AI instantly and get more relevant and qualified leads!
     </p>
@@ -184,9 +208,16 @@ export default function FeaturesSection() {
   {/* Content */}
   <div className="md:w-1/2 mb-8 md:mb-0">
     <p className="text-xs font-bold text-gray-700 mb-2 uppercase">Track Leads Precisely & Automate Reminders</p>
-    <h3 className="text-3xl md:text-4xl font-bold text-purple-700 leading-tight mb-4">
+    <h2 style={{
+    fontSize: '2.5rem', // text-3xl (30px)
+    fontWeight: 'bold',
+    marginBottom: '1rem', // mb-4
+    backgroundImage: 'linear-gradient(to right, #2e7af5ff, #8b5cf6, #7513c5ff)', // from-blue-500 via-purple-500 to-purple-700
+    WebkitBackgroundClip: 'text',
+    color: 'transparent',
+  }}>
       Opportunity Pipelines
-    </h3>
+    </h2>
     <p className="text-gray-700 mb-4">
       Myskript's Sales or Opportunity Pipelines are designed to help you track your sales and increase conversions.
     </p>
@@ -213,9 +244,16 @@ export default function FeaturesSection() {
     <p className="text-xs font-bold text-gray-700 mb-2 uppercase">
       Ways to Build Communities With
     </p>
-    <h3 className="text-3xl md:text-4xl font-bold text-[#5F2EEA] leading-tight mb-4">
+    <h2 style={{
+    fontSize: '2.5rem', // text-3xl (30px)
+    fontWeight: 'bold',
+    marginBottom: '1rem', // mb-4
+    backgroundImage: 'linear-gradient(to right, #2e7af5ff, #8b5cf6, #7513c5ff)', // from-blue-500 via-purple-500 to-purple-700
+    WebkitBackgroundClip: 'text',
+    color: 'transparent',
+  }}>
       Courses, Communities<br />& Membership Areas
-    </h3>
+    </h2>
     <p className="text-gray-700 mb-4">
       Give access to your content, test your students with assessments in an automated way and build your tribe!
     </p>
@@ -262,9 +300,16 @@ export default function FeaturesSection() {
 
   {/* Right: Text Content */}
   <div className="md:w-1/2 md:pl-10">
-    <h3 className="text-3xl md:text-4xl font-bold text-[#5F2EEA] leading-tight mb-4">
+    <h2 style={{
+    fontSize: '2.5rem', // text-3xl (30px)
+    fontWeight: 'bold',
+    marginBottom: '1rem', // mb-4
+    backgroundImage: 'linear-gradient(to right, #2e7af5ff, #8b5cf6, #7513c5ff)', // from-blue-500 via-purple-500 to-purple-700
+    WebkitBackgroundClip: 'text',
+    color: 'transparent',
+  }}>
       All in One Team Inbox
-    </h3>
+    </h2>
     <p className="text-gray-700 mb-4">
       Centralised communication with your prospects via <span className="font-semibold">Email, SMS, GMB, WhatsApp, Facebook, Instagram.</span>
     </p>
@@ -296,9 +341,16 @@ export default function FeaturesSection() {
     <p className="text-xs font-bold text-gray-700 mb-2 uppercase">
       Customer Relationship Management
     </p>
-    <h3 className="text-3xl md:text-4xl font-bold text-[#5F2EEA] leading-tight mb-4">
+    <h2 style={{
+    fontSize: '2.5rem', // text-3xl (30px)
+    fontWeight: 'bold',
+    marginBottom: '1rem', // mb-4
+    backgroundImage: 'linear-gradient(to right, #2e7af5ff, #8b5cf6, #7513c5ff)', // from-blue-500 via-purple-500 to-purple-700
+    WebkitBackgroundClip: 'text',
+    color: 'transparent',
+  }}>
       C.R.M
-    </h3>
+    </h2>
     <p className="text-gray-700 mb-4">
       Centralised communication with your prospects via <span className="font-semibold">Email, SMS, GMB, WhatsApp, Facebook, Instagram.</span>
     </p>
@@ -347,9 +399,16 @@ export default function FeaturesSection() {
     <p className="text-xs font-bold text-gray-700 mb-2 uppercase">
       Email Marketing with AI
     </p>
-    <h3 className="text-3xl md:text-4xl font-bold text-[#5F2EEA] leading-tight mb-4">
+    <h2 style={{
+    fontSize: '2.5rem', // text-3xl (30px)
+    fontWeight: 'bold',
+    marginBottom: '1rem', // mb-4
+    backgroundImage: 'linear-gradient(to right, #2e7af5ff, #8b5cf6, #7513c5ff)', // from-blue-500 via-purple-500 to-purple-700
+    WebkitBackgroundClip: 'text',
+    color: 'transparent',
+  }}>
       Email Marketing
-    </h3>
+    </h2>
     <p className="text-gray-700 mb-4">
       Send highly personalised campaigns with our advanced segmentations and easy drag-n-drop email builder.
     </p>
@@ -380,9 +439,16 @@ export default function FeaturesSection() {
     <p className="text-xs font-bold text-gray-700 mb-2 uppercase">
       Social Media Schedule at Scale
     </p>
-    <h3 className="text-3xl md:text-4xl font-bold text-[#5F2EEA] leading-tight mb-4">
+    <h2 style={{
+    fontSize: '2.5rem', // text-3xl (30px)
+    fontWeight: 'bold',
+    marginBottom: '1rem', // mb-4
+    backgroundImage: 'linear-gradient(to right, #2e7af5ff, #8b5cf6, #7513c5ff)', // from-blue-500 via-purple-500 to-purple-700
+    WebkitBackgroundClip: 'text',
+    color: 'transparent',
+  }}>
       Social Planner and <br />Content Scheduling
-    </h3>
+    </h2>
     <p className="text-gray-700 mb-4">
       Plan and schedule posts, stories, reels (coming soon) across Facebook, Instagram, LinkedIn, Twitter.
     </p>
@@ -430,9 +496,16 @@ export default function FeaturesSection() {
     <p className="text-xs font-bold text-gray-700 mb-2 uppercase">
       Create, Share, Get Booked
     </p>
-    <h3 className="text-3xl md:text-4xl font-bold text-[#5F2EEA] leading-tight mb-4">
+    <h2 style={{
+    fontSize: '2.5rem', // text-3xl (30px)
+    fontWeight: 'bold',
+    marginBottom: '1rem', // mb-4
+    backgroundImage: 'linear-gradient(to right, #2e7af5ff, #8b5cf6, #7513c5ff)', // from-blue-500 via-purple-500 to-purple-700
+    WebkitBackgroundClip: 'text',
+    color: 'transparent',
+  }}>
       Whatsapp
-    </h3>
+    </h2>
     <p className="text-gray-700 mb-4">
       Centralised communication with your prospects via <span className="font-semibold">Email, SMS, GMB, WhatsApp, Facebook, Instagram.</span>
     </p>
@@ -469,9 +542,16 @@ export default function FeaturesSection() {
     <p className="text-xs font-bold text-gray-700 mb-2 uppercase">
       Create, Share, Get Booked
     </p>
-    <h3 className="text-3xl md:text-4xl font-bold text-[#5F2EEA] leading-tight mb-4">
+    <h2 style={{
+    fontSize: '2.5rem', // text-3xl (30px)
+    fontWeight: 'bold',
+    marginBottom: '1rem', // mb-4
+    backgroundImage: 'linear-gradient(to right, #2e7af5ff, #8b5cf6, #7513c5ff)', // from-blue-500 via-purple-500 to-purple-700
+    WebkitBackgroundClip: 'text',
+    color: 'transparent',
+  }}>
       Calender Booking
-    </h3>
+    </h2>
     <p className="text-gray-700 mb-4">
       Send highly personalised campaigns with our advanced segmentations and easy drag-n-drop email builder.
     </p>
