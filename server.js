@@ -11,7 +11,7 @@ const app = express();
 
 // ✅ Middleware
 app.use(cors({
-  origin: ["https://myskript.io", "https://your-frontend-domain.com"], // ✅ Update to your actual frontend domain
+  origin: ["https://myskript.io", "https://myskript.io"], // ✅ Update to your actual frontend domain
   methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
