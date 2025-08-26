@@ -10,13 +10,10 @@ import jwt from "jsonwebtoken";
 dotenv.config();
 
 // ✅ Connect to MongoDB
-mongoose.connect(process.env.DATABASE_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "MongoDB connection error:"));
-db.once("open", () => console.log("✅ MongoDB connected"));
+mongoose
+  .connect(process.env.DATABASE_URL)
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
 
 // ✅ User Schema
 const userSchema = new mongoose.Schema({
@@ -44,12 +41,13 @@ const razorpay = new Razorpay({
 const app = express();
 app.use(
   cors({
-    origin: "https://myskript.io", // ✅ without trailing slash
+    origin: ["https://www.myskript.io", "http://localhost:5173"], // allow frontend domains
     methods: ["GET", "POST"],
-    allowedHeaders: ["*"],
+    credentials: true,
   })
 );
 
+// For normal routes
 app.use(express.json());
 
 // ✅ JWT Authentication Middleware
@@ -113,9 +111,6 @@ app.post("/create-subscription", async (req, res) => {
       start_at: trialEnd,
       total_count: 12,
       customer_notify: 1,
-      addons: [
-        { item: { name: "Registration Fee", amount: 500, currency: "INR" } },
-      ],
     });
 
     // Save user to DB
@@ -214,17 +209,15 @@ app.post("/cancel-subscription", authenticate, async (req, res) => {
 });
 
 // ✅ Webhook: Handle Razorpay Events
-app.post(
-  "/webhook",
-  express.raw({ type: "application/json" }),
-  (req, res) => {
-    const signature = req.headers["x-razorpay-signature"];
+app.post("/webhook", express.raw({ type: "application/json" }), (req, res) => {
+  try {
     const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
-    const body = req.body;
+    const signature = req.headers["x-razorpay-signature"];
+    const body = req.body.toString(); // buffer → string
 
     const digest = crypto
       .createHmac("sha256", secret)
-      .update(body.toString())
+      .update(body)
       .digest("hex");
 
     if (digest === signature) {
@@ -241,10 +234,13 @@ app.post(
       console.error("❌ Invalid webhook signature");
       res.status(400).send("Invalid signature");
     }
+  } catch (err) {
+    console.error("❌ Webhook error:", err.message);
+    res.status(500).send("Webhook error");
   }
-);
+});
 
-// ✅ Admin: Get All Subscriptions (for Admin Dashboard)
+// ✅ Admin: Get All Subscriptions
 app.get("/get-all-subscriptions", async (req, res) => {
   try {
     const users = await User.find({}).sort({ createdAt: -1 });
@@ -263,7 +259,7 @@ app.get("/get-all-subscriptions", async (req, res) => {
             subscriptionId: subscription.id,
             createdAt: user.createdAt,
           };
-        } catch (err) {
+        } catch {
           return {
             _id: user._id,
             customerName: user.name,
@@ -288,7 +284,7 @@ app.get("/get-all-subscriptions", async (req, res) => {
 
 // ✅ Health Check
 app.get("/", (req, res) => {
-  res.send("🚀 Razorpay Subscription Server Running");
+  res.send("🚀 Razorpay Subscription Server Running on Render");
 });
 
 // ✅ Start Server
