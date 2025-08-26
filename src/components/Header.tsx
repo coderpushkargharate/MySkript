@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
-
+import { Link } from "react-router-dom";
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -13,16 +13,17 @@ export default function Header() {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white rounded-full shadow-md px-8 py-3 mx-auto max-w-[68rem] mt-4">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white py-3 rounded-full shadow-md px-8 
+     mx-auto max-w-[70rem] mt-4">
       <div className="flex items-center justify-between">
         {/* Logo */}
-        <a href="/" className="flex items-center space-x-2">
-          <img
-            src="./assets/img/Myskript Logos.png"
-            alt="myskript logo"
-            className="h-10 w-auto"
-          />
-        </a>
+       <Link to="/" className="flex items-center space-x-2">
+  <img
+    src="/assets/img/Myskript Logos.png"
+    alt="myskript logo"
+    className="h-12 w-auto"
+  />
+</Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex space-x-12 items-center">
@@ -40,7 +41,7 @@ export default function Header() {
 
       {/* CTA Button */}
 <div className="hidden md:block">
-  <button
+  <a href="#pricing"><button 
     style={{
     background: "linear-gradient(90deg, #2087FF 0%, #E60CEB 100%)",
       color: "#fff",
@@ -61,7 +62,7 @@ export default function Header() {
     }
   >
     Get 7 Day Free Trial →
-  </button>
+  </button></a>
 </div>
 
 
@@ -90,9 +91,9 @@ export default function Header() {
               {item.name}
             </a>
           ))}
-          <button className="w-full bg-gradient-to-r from-blue-500 to-fuchsia-600 text-white text-sm font-medium py-2 rounded-full">
+           <a href="#pricing"> <button className="w-full bg-gradient-to-r from-blue-500 to-fuchsia-600 text-white text-sm font-medium py-2 rounded-full">
             Get 7 Day Free Trial →
-          </button>
+          </button></a>
         </div>
       )}
     </header>

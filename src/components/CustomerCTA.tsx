@@ -38,17 +38,16 @@ export default function CustomerCTA() {
         Sign up today and see the difference Myskript.io can make for your business.
       </p>
 
-      {/* Input + Button */}
-      <div className="flex max-w-xl mx-auto rounded-full overflow-hidden border border-gray-200 shadow-sm">
-        <input
-          type="tel"
-          placeholder="Your Mobile Number"
-          className="flex-1 px-5 py-3 text-gray-800 placeholder-gray-400 focus:outline-none"
-        />
-        <button className="bg-black text-white px-6 py-3 font-medium hover:opacity-90 transition">
-          Get Started
-        </button>
-      </div>
+    {/* Input + Button */}
+<div className="text-center">
+  <a href="#pricing">
+    <button className="bg-black text-white px-8 py-4 rounded-xl text-lg font-semibold shadow-lg hover:bg-gray-900 hover:scale-105 transition-all duration-300 flex items-center gap-2 mx-auto">
+      <span>Get Started For Free</span>
+      <span className="transform group-hover:translate-x-1 transition duration-300">↗</span>
+    </button>
+  </a>
+</div>
+
 
       {/* Floating Avatars */}
     

@@ -1,5 +1,5 @@
 export default function IntegrationsSection() {
-  const icons = [
+  const topIcons = [
     "/assets/Transparent Icons/1.png",
     "/assets/Transparent Icons/2.png",
     "/assets/Transparent Icons/3.png",
@@ -20,6 +20,9 @@ export default function IntegrationsSection() {
     "/assets/Transparent Icons/18.png",
     "/assets/Transparent Icons/19.png",
     "/assets/Transparent Icons/20.png",
+  ];
+
+  const bottomIcons = [
     "/assets/Transparent Icons/21.png",
     "/assets/Transparent Icons/22.png",
     "/assets/Transparent Icons/23.png",
@@ -40,22 +43,6 @@ export default function IntegrationsSection() {
     "/assets/Transparent Icons/38.png",
     "/assets/Transparent Icons/39.png",
     "/assets/Transparent Icons/40.png",
-    "/assets/Transparent Icons/41.png",
-    "/assets/Transparent Icons/42.png",
-    "/assets/Transparent Icons/43.png",
-    "/assets/Transparent Icons/44.png",
-    "/assets/Transparent Icons/45.png",
-    "/assets/Transparent Icons/46.png",
-    "/assets/Transparent Icons/47.png",
-    "/assets/Transparent Icons/48.png",
-    "/assets/Transparent Icons/49.png",
-    "/assets/Transparent Icons/50.png",
-    "/assets/Transparent Icons/51.png",
-    "/assets/Transparent Icons/52.png",
-    "/assets/Transparent Icons/53.png",
-    "/assets/Transparent Icons/54.png",
-    "/assets/Transparent Icons/55.png",
-   
   ];
 
   return (
@@ -64,9 +51,9 @@ export default function IntegrationsSection() {
         {/* Top Carousel */}
         <div className="overflow-hidden relative w-full mb-6">
           <div className="flex gap-6 md:gap-10 animate-scroll-right">
-            {icons.concat(icons).map((icon, i) => (
+            {topIcons.concat(topIcons).map((icon, i) => (
               <div key={`top-${i}`} className="w-16 h-16 md:w-20 md:h-20 flex-shrink-0 flex items-center justify-center animate-rotate-slow">
-                <img src={icon} alt={`Integration ${i}`} className="w-12 h-12 md:w-20 md:h-20 object-contain" />
+                <img src={icon} alt={`Top Integration ${i}`} className="w-12 h-12 md:w-20 md:h-20 object-contain" />
               </div>
             ))}
           </div>
@@ -75,9 +62,9 @@ export default function IntegrationsSection() {
         {/* Bottom Carousel */}
         <div className="overflow-hidden relative w-full mb-6">
           <div className="flex gap-6 md:gap-10 animate-scroll-left">
-            {icons.concat(icons).map((icon, i) => (
+            {bottomIcons.concat(bottomIcons).map((icon, i) => (
               <div key={`bottom-${i}`} className="w-16 h-16 md:w-20 md:h-20 flex-shrink-0 flex items-center justify-center animate-rotate-slow">
-                <img src={icon} alt={`Integration ${i}`} className="w-12 h-12 md:w-20 md:h-20 object-contain" />
+                <img src={icon} alt={`Bottom Integration ${i}`} className="w-12 h-12 md:w-20 md:h-20 object-contain" />
               </div>
             ))}
           </div>
@@ -107,7 +94,7 @@ export default function IntegrationsSection() {
         }
         .animate-scroll-left { animation: scroll-left 20s linear infinite; }
         .animate-scroll-right { animation: scroll-right 20s linear infinite; }
-      
+        .animate-rotate-slow { animation: rotate 20s linear infinite; }
       `}</style>
     </section>
   );

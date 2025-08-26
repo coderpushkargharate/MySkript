@@ -16,7 +16,7 @@ import WhyChooseUs from './WhyChooseUs';
 export default function HeroSection() {
   return (
     <>
-    <section className="relative overflow-hidden bg-white pt-16 pb-10 sm:pt-10 lg:pt-32 ">
+    <section className="relative overflow-hidden bg-white pt-16 pb-10 sm:pt-10 lg:pt-32 " id='home'>
       {/* Top Gradient */}
       <div className="absolute top-0 left-0 w-[300px] h-[300px] bg-orange-100 blur-[120px] rounded-full opacity-60 z-0" />
 
@@ -53,27 +53,16 @@ export default function HeroSection() {
 
 
     {/* Heading */}
-<h1
-  style={{
-    fontSize: "3.50rem", // base size (text-4xl)
-    fontWeight: 700,
-    color: "#111827", // Tailwind's gray-900
-    lineHeight: "1.2",
-    marginBottom: "1rem",
-  }}
->
+<h1 className="text-[30px] sm:text-[40px] lg:text-[60px] font-bold text-gray-900 leading-[1.2] mb-4">
   Simplest System Ever Built to <br className="hidden sm:inline" />
   Automate &amp; Scale Your Business <br className="hidden sm:inline" />
-  <span style={{ color: "#000000" }}>without Limits.</span>
+  <span className="text-black">without Limits.</span>
 </h1>
-
-
         {/* Paragraph */}
         <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-6">
           Scale Your Business with a Comprehensive Suite of Tools that Slash <br />
           Costs at-least by 80% and Amplify Results with AI Precision Tracking
         </p>
-
         {/* Benefits */}
         <div className="flex flex-wrap justify-center gap-6 text-sm font-medium text-gray-700 mb-6">
           <div className="flex items-center gap-2">
@@ -89,7 +78,19 @@ export default function HeroSection() {
             Customizable
           </div>
         </div>
-
+      <video
+  width="760"
+  height="360"
+  autoPlay
+  muted
+  loop
+  playsInline
+  controls
+  className="rounded-[20px] shadow-lg mx-auto mb-3 s"
+>
+  <source src="/assets/Myskript_16_9_Video_01_R1.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
      {/* Buttons */}
 <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginBottom: "1.5rem" }}>
   <button
@@ -110,7 +111,7 @@ export default function HeroSection() {
     Learn More →
   </button>
 
-  <button
+  <a href="#pricing"><button
     style={{
       padding: "10px 28px",
       borderRadius: "18px",
@@ -126,7 +127,7 @@ export default function HeroSection() {
     onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
   >
     Get 7 Day Free Trial →
-  </button>
+  </button></a>
 </div>
 
 
@@ -146,23 +147,29 @@ export default function HeroSection() {
       display: flex;
       animation: scroll 15s linear infinite;
     }
+
+    @media (max-width: 1024px) {
+      .animate-scroll {
+        animation: scroll 25s linear infinite; /* slower on small screens */
+      }
+    }
   `}</style>
 
   <div className="animate-scroll w-[200%]">
     {/* First batch */}
-    <div className="flex w-1/2 flex-shrink-0 items-center gap-8">
-      <img src="./assets/img/Color Logos/Logo 1.png" alt="brand" width="120" height="60" />
-      <img src="./assets/img/Color Logos/Logo 2.png" alt="brand" width="120" height="60" />
-      <img src="./assets/img/Color Logos/Logo 3.png" alt="brand" width="120" height="60" />
-      <img src="./assets/img/Color Logos/Logo 4.png" alt="brand" width="120" height="60" />
+    <div className="flex w-1/2 flex-shrink-0 items-center gap-2 sm:gap-6 md:gap-8">
+      <img className="w-28 sm:w-24 md:w-28" src="./assets/img/Color Logos/Logo 1.png" alt="brand" />
+      <img className="w-28 sm:w-24 md:w-28" src="./assets/img/Color Logos/Logo 2.png" alt="brand" />
+      <img className="w-28 sm:w-24 md:w-28" src="./assets/img/Color Logos/Logo 3.png" alt="brand" />
+      <img className="w-28 sm:w-24 md:w-28" src="./assets/img/Color Logos/Logo 4.png" alt="brand" />
     </div>
 
     {/* Second batch */}
-    <div className="flex w-1/2 flex-shrink-0 items-center gap-8">
-      <img src="./assets/img/Color Logos/Logo 1.png" alt="brand" width="120" height="60" />
-      <img src="./assets/img/Color Logos/Logo 2.png" alt="brand" width="120" height="60" />
-      <img src="./assets/img/Color Logos/Logo 3.png" alt="brand" width="120" height="60" />
-      <img src="./assets/img/Color Logos/Logo 4.png" alt="brand" width="120" height="60" />
+    <div className="flex w-1/2 flex-shrink-0 items-center gap-4 sm:gap-6 md:gap-8">
+      <img className="w-28 sm:w-24 md:w-28 ml-28 lg:ml-0" src="./assets/img/Color Logos/Logo 1.png" alt="brand" />
+      <img className="w-28 sm:w-24 md:w-28" src="./assets/img/Color Logos/Logo 2.png" alt="brand" />
+      <img className="w-28 sm:w-24 md:w-28" src="./assets/img/Color Logos/Logo 3.png" alt="brand" />
+      <img className="w-28 sm:w-24  md:w-28" src="./assets/img/Color Logos/Logo 4.png" alt="brand" />
     </div>
   </div>
 </div>
@@ -174,9 +181,9 @@ export default function HeroSection() {
 <div
   style={{
     position: "absolute",
-    bottom: "10rem",
-    left: "13rem",
-    width: "14rem",
+    bottom: "36rem",
+    left: "8rem",
+    width: "16rem",
     transform: "rotate(-8deg)",
     display: window.innerWidth >= 1024 ? "block" : "none",
   }}
@@ -184,7 +191,7 @@ export default function HeroSection() {
   <img
     src="https://framerusercontent.com/images/4x6Oi7JmCZ1ITUYzGOx7Ei8JVg.png"
     alt="stats"
-    width="260"
+    width="280"
     height="160"
   />
 </div>
@@ -202,7 +209,7 @@ export default function HeroSection() {
   <img
     src="./assets/img/gDhp3w4pA74orElh0c2VuCs3Z8.png"
     alt="stats2"
-    width="260"
+    width="300"
     height="160"
   />
 </div>
@@ -210,8 +217,8 @@ export default function HeroSection() {
 <div
   style={{
     position: "absolute",
-    bottom: "19rem",
-    right: "6rem",
+    bottom: "46rem",
+    right: "5rem",
     width: "20rem",
     transform: "rotate(-7deg)",
     display: window.innerWidth >= 1024 ? "block" : "none",
@@ -220,7 +227,7 @@ export default function HeroSection() {
   <img
     src="https://framerusercontent.com/images/2VxsRmb0uljTnJnCoksVqF36h0.png"
     alt="stats3"
-    width="240"
+    width="280"
     height="130"
   />
 </div>

@@ -9,6 +9,9 @@ import ThankYou from './components/ThankYou';
 import Header from './components/Header';
 import HeroSection from './components/HeroSection';
 import Footer from './components/Footer';
+import ChatbotButton from './components/ChatbotButton';
+import Terms from './components/Terms';
+import UserDashboard from './components/UserDashboard';
 
 function App() {
   return (
@@ -22,7 +25,10 @@ function App() {
           <Route path="/thank-you" element={<ThankYou />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/terms" element={<Terms />} />
+           <Route path="/userdashboard" element={<UserDashboard />} />
         </Routes>
+        {/* <ChatbotButton/>/ */}
         <Footer />
       </div>
     </Router>

@@ -22,16 +22,18 @@ export default function PaymentForm() {
     phone: ''
   });
 
-  const plan = planDetails[planId];
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
- useEffect(() => {
-  const script = document.createElement("script");
-  script.src = "https://checkout.razorpay.com/v1/checkout.js";
-  script.async = true;
-  document.body.appendChild(script);
-  return () => document.body.removeChild(script);
-}, []);
-
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    script.onload = () => console.log("Razorpay SDK loaded");
+    document.body.appendChild(script);
+    return () => document.body.removeChild(script);
+  }, []);
 
   const handleInputChange = (e) => {
     setFormData(prev => ({
@@ -41,8 +43,9 @@ export default function PaymentForm() {
   };
 
   const handlePayment = async () => {
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone) {
-      alert('Please fill all required fields');
+    const { firstName, lastName, email, phone } = formData;
+    if (!firstName || !lastName || !email || !phone) {
+      alert('Please fill all fields');
       return;
     }
 
@@ -52,33 +55,32 @@ export default function PaymentForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          customer_email: formData.email,
-          customer_name: `${formData.firstName} ${formData.lastName}`,
-          customer_phone: formData.phone,
+          customer_email: email,
+          customer_name: `${firstName} ${lastName}`,
+          customer_phone: phone,
           plan_id: planId,
         }),
       });
 
       const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Payment failed');
-      }
+      if (!response.ok) throw new Error(data.message || "Payment setup failed");
+
+      // Store token for future auth
+      localStorage.setItem('authToken', data.token);
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         subscription_id: data.subscriptionId,
         name: 'BusinessPro',
-        description: 'Subscription Payment - 7 Day Free Trial',
+        description: '7-Day Free Trial + ₹5 Registration Fee',
         handler: function (response) {
-          localStorage.setItem('paymentSuccess', 'true');
-          localStorage.setItem('customerData', JSON.stringify(formData));
-          navigate('/business-form');
+          alert("Payment successful! Redirecting...");
+          navigate('/dashboard');
         },
         prefill: {
-          name: `${formData.firstName} ${formData.lastName}`,
-          email: formData.email,
-          contact: formData.phone
+          name: `${firstName} ${lastName}`,
+          email: email,
+          contact: phone
         },
         theme: { color: '#8B5CF6' },
         modal: {
@@ -86,18 +88,17 @@ export default function PaymentForm() {
         }
       };
 
-      const razor = new window.Razorpay(options);
-      razor.open();
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (error) {
       console.error('Payment error:', error);
-      alert('Payment failed. Please try again.');
+      alert(error.message || 'Payment failed. Try again.');
       setLoading(false);
     }
   };
 
-  if (!plan) {
-    return <div className="min-h-screen flex items-center justify-center">Plan not found</div>;
-  }
+  const plan = planDetails[planId];
+  if (!plan) return <div className="min-h-screen flex items-center justify-center">Plan not found</div>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
