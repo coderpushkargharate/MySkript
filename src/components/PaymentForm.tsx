@@ -65,7 +65,6 @@ export default function PaymentForm() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Payment setup failed");
 
-      // Store token for future auth
       localStorage.setItem('authToken', data.token);
 
       const options = {
@@ -74,8 +73,17 @@ export default function PaymentForm() {
         name: 'BusinessPro',
         description: '7-Day Free Trial + ₹5 Registration Fee',
         handler: function (response) {
+          // ✅ Save payment success + customer details
+          localStorage.setItem('paymentSuccess', 'true');
+          localStorage.setItem('customerData', JSON.stringify({
+            firstName,
+            lastName,
+            email,
+            phone
+          }));
+
           alert("Payment successful! Redirecting...");
-          navigate('/dashboard');
+          navigate('/business-form');
         },
         prefill: {
           name: `${firstName} ${lastName}`,
@@ -112,6 +120,7 @@ export default function PaymentForm() {
         </button>
 
         <div className="grid lg:grid-cols-2 gap-8">
+          {/* ✅ Order Summary */}
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <div className="flex items-center mb-6">
               <Check className="w-6 h-6 text-green-500 mr-3" />
@@ -164,6 +173,7 @@ export default function PaymentForm() {
             </div>
           </div>
 
+          {/* ✅ Payment Details Form */}
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Payment Details</h2>
             <p className="text-gray-600 mb-8">Enter your details to start your free trial</p>

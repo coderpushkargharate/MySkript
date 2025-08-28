@@ -17,7 +17,6 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json());
 
 // --------------------- MONGOOSE CONNECTION (robust) ---------------------
 mongoose.set("strictQuery", false);
@@ -31,13 +30,9 @@ const connectWithRetry = async (retries = 5, delayMs = 5000) => {
 
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      // Recommended: let mongoose parse options from the connection string.
-      // Provide explicit timeouts so failures surface quickly on Render logs.
       await mongoose.connect(uri, {
-        // serverSelectionTimeoutMS controls how long to try to find a server
         serverSelectionTimeoutMS: 10000,
         socketTimeoutMS: 45000,
-        // keepAlive and family default behavior is fine for Atlas
       });
       console.log("✅ MongoDB connected");
       return;
@@ -51,13 +46,10 @@ const connectWithRetry = async (retries = 5, delayMs = 5000) => {
         await new Promise((r) => setTimeout(r, delayMs));
       } else {
         console.error("❌ All MongoDB connection attempts failed.");
-        // Keep process alive for Render to show failure in logs; optionally exit.
-        // process.exit(1);
       }
     }
   }
 };
-
 connectWithRetry();
 
 // --------------------- MONGOOSE MODELS ---------------------
@@ -75,6 +67,22 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model("User", userSchema);
 
+const businessSchema = new mongoose.Schema({
+  customerId: String,
+  customerName: String,
+  customerEmail: { type: String, index: true },
+  customerPhone: String,
+  fullName: String,
+  businessName: String,
+  businessAddress: String,
+  businessEmail: String,
+  businessPhone: String,
+  businessIndustry: String,
+  businessDescription: String,
+  createdAt: { type: Date, default: Date.now },
+});
+const Business = mongoose.model("Business", businessSchema);
+
 // --------------------- RAZORPAY ---------------------
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -82,7 +90,7 @@ const razorpay = new Razorpay({
 });
 
 // --------------------- LOGGER & AUTH ---------------------
-app.use((req, res, next) => {
+app.use((req, _res, next) => {
   console.log(`➡️ ${req.method} ${req.url}`);
   next();
 });
@@ -94,7 +102,7 @@ const authenticate = (req, res, next) => {
     const verified = jwt.verify(token, process.env.JWT_SECRET);
     req.user = verified;
     next();
-  } catch (err) {
+  } catch {
     return res.status(401).json({ error: "Invalid token" });
   }
 };
@@ -109,7 +117,40 @@ const planDetails = {
   "plan_R1v1VETXTsHy3p": { name: "Enterprise Plan", price: "₹98,500", period: "year" },
 };
 
+// --------------------- WEBHOOK BEFORE JSON PARSER ---------------------
+app.post("/webhook", express.raw({ type: "application/json" }), (req, res) => {
+  try {
+    const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
+    const signature = req.headers["x-razorpay-signature"];
+    const body = req.body.toString();
+    const digest = crypto.createHmac("sha256", secret).update(body).digest("hex");
+
+    if (digest === signature) {
+      const event = JSON.parse(body);
+      console.log("✅ Webhook Event:", event.event);
+
+      if (event.event === "subscription.cancelled") {
+        const subId = event.payload.subscription.entity.id;
+        User.updateOne({ subscriptionId: subId }, { status: "cancelled" }).exec();
+      }
+
+      res.status(200).send("OK");
+    } else {
+      console.error("❌ Invalid webhook signature");
+      res.status(400).send("Invalid signature");
+    }
+  } catch (err) {
+    console.error("❌ Webhook error:", err);
+    res.status(500).send("Webhook error");
+  }
+});
+
+// After webhook route, parse JSON for the rest:
+app.use(express.json());
+
 // --------------------- ROUTES ---------------------
+
+// Create subscription
 app.post("/create-subscription", async (req, res) => {
   const { customer_email, customer_name, customer_phone, plan_id } = req.body;
   if (!plan_id || !customer_email || !customer_name || !customer_phone) {
@@ -166,13 +207,15 @@ app.post("/create-subscription", async (req, res) => {
   }
 });
 
+// User dashboard (includes business info)
 app.get("/user-dashboard", authenticate, async (req, res) => {
   try {
     const user = await User.findOne({ email: req.user.email });
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    const subscription = await razorpay.subscriptions.fetch(user.subscriptionId);
+    const subscription = await razorpay.subscriptions.fetch(user.subscriptionId).catch(() => null);
     const plan = planDetails[user.planId] || { name: "Unknown Plan", price: "N/A", period: "N/A" };
+    const business = await Business.findOne({ customerEmail: user.email });
 
     res.json({
       user: {
@@ -183,15 +226,18 @@ app.get("/user-dashboard", authenticate, async (req, res) => {
         startDate: user.startDate,
         nextBilling: user.nextBilling,
       },
-      subscription: {
-        id: subscription.id,
-        status: subscription.status,
-        planId: subscription.plan_id,
-        currentStart: new Date(subscription.current_start * 1000).toLocaleDateString(),
-        currentEnd: new Date(subscription.current_end * 1000).toLocaleDateString(),
-        pauseStatus: subscription.pause_status,
-      },
+      subscription: subscription
+        ? {
+            id: subscription.id,
+            status: subscription.status,
+            planId: subscription.plan_id,
+            currentStart: new Date(subscription.current_start * 1000).toLocaleDateString(),
+            currentEnd: new Date(subscription.current_end * 1000).toLocaleDateString(),
+            pauseStatus: subscription.pause_status,
+          }
+        : null,
       plan,
+      business,
     });
   } catch (err) {
     console.error("❌ Dashboard fetch error:", err);
@@ -199,6 +245,7 @@ app.get("/user-dashboard", authenticate, async (req, res) => {
   }
 });
 
+// Cancel subscription
 app.post("/cancel-subscription", authenticate, async (req, res) => {
   const { subscription_id } = req.body;
   if (!subscription_id) return res.status(400).json({ message: "subscription_id is required" });
@@ -213,62 +260,93 @@ app.post("/cancel-subscription", authenticate, async (req, res) => {
   }
 });
 
-app.post("/webhook", express.raw({ type: "application/json" }), (req, res) => {
+// Save business info (called by BusinessForm)
+app.post("/save-business-info", async (req, res) => {
   try {
-    const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
-    const signature = req.headers["x-razorpay-signature"];
-    const body = req.body.toString();
-    const digest = crypto.createHmac("sha256", secret).update(body).digest("hex");
+    const {
+      customerId,
+      customerName,
+      customerEmail,
+      customerPhone,
+      fullName,
+      businessName,
+      businessAddress,
+      businessEmail,
+      businessPhone,
+      businessIndustry,
+      businessDescription,
+    } = req.body;
 
-    if (digest === signature) {
-      const event = JSON.parse(body);
-      console.log("✅ Webhook Event:", event.event);
-      if (event.event === "subscription.cancelled") {
-        const subId = event.payload.subscription.entity.id;
-        User.updateOne({ subscriptionId: subId }, { status: "cancelled" }).exec();
-      }
-      res.status(200).send("OK");
-    } else {
-      console.error("❌ Invalid webhook signature");
-      res.status(400).send("Invalid signature");
+    if (!customerEmail || !businessName || !businessEmail) {
+      return res.status(400).json({ error: "Missing required fields" });
     }
+
+    const newBusiness = new Business({
+      customerId,
+      customerName,
+      customerEmail,
+      customerPhone,
+      fullName,
+      businessName,
+      businessAddress,
+      businessEmail,
+      businessPhone,
+      businessIndustry,
+      businessDescription,
+    });
+
+    await newBusiness.save();
+
+    res.status(201).json({ success: true, message: "Business info saved successfully" });
   } catch (err) {
-    console.error("❌ Webhook error:", err);
-    res.status(500).send("Webhook error");
+    console.error("❌ Save business info error:", err);
+    res.status(500).json({ success: false, message: "Failed to save business info" });
   }
 });
 
-app.get("/get-all-subscriptions", async (req, res) => {
+// Get all subscriptions (joined with Business by email)
+app.get("/get-all-subscriptions", async (_req, res) => {
   try {
     const users = await User.find({}).sort({ createdAt: -1 });
+
     const subscriptions = await Promise.all(
       users.map(async (user) => {
+        // Try fresh status from Razorpay; fallback to stored
+        let status = user.status;
+        let subscriptionId = user.subscriptionId;
         try {
-          const subscription = await razorpay.subscriptions.fetch(user.subscriptionId);
-          return {
-            _id: user._id,
-            customerName: user.name,
-            customerEmail: user.email,
-            customerPhone: user.phone,
-            planName: planDetails[user.planId]?.name || "Unknown Plan",
-            planPrice: planDetails[user.planId]?.price || "₹0",
-            status: subscription.status,
-            subscriptionId: subscription.id,
-            createdAt: user.createdAt,
-          };
+          const sub = await razorpay.subscriptions.fetch(user.subscriptionId);
+          status = sub.status;
+          subscriptionId = sub.id;
         } catch {
-          return {
-            _id: user._id,
-            customerName: user.name,
-            customerEmail: user.email,
-            customerPhone: user.phone,
-            planName: planDetails[user.planId]?.name || "Unknown Plan",
-            planPrice: planDetails[user.planId]?.price || "₹0",
-            status: user.status,
-            subscriptionId: user.subscriptionId,
-            createdAt: user.createdAt,
-          };
+          // ignore fetch error; use stored values
         }
+
+        // Join on email
+        const business = await Business.findOne({ customerEmail: user.email });
+
+        return {
+          _id: user._id.toString(),
+          customerName: user.name,
+          customerEmail: user.email,
+          customerPhone: user.phone,
+          planName: planDetails[user.planId]?.name || "Unknown Plan",
+          planPrice: planDetails[user.planId]?.price || "₹0",
+          status,
+          subscriptionId,
+          createdAt: user.createdAt,
+          businessInfo: business
+            ? {
+                fullName: business.fullName,
+                businessName: business.businessName,
+                businessEmail: business.businessEmail,
+                businessPhone: business.businessPhone,
+                businessAddress: business.businessAddress,
+                businessIndustry: business.businessIndustry,
+                businessDescription: business.businessDescription,
+              }
+            : null,
+        };
       })
     );
 
@@ -279,7 +357,10 @@ app.get("/get-all-subscriptions", async (req, res) => {
   }
 });
 
-app.get("/", (req, res) => res.send("🚀 Razorpay Subscription Server Running on Render"));
+// Health check
+app.get("/", (_req, res) =>
+  res.send("🚀 Razorpay Subscription Server Running on Render")
+);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Server live on port ${PORT}`));

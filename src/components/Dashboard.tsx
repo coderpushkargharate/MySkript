@@ -2,25 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, CreditCard, TrendingUp, DollarSign, LogOut, Calendar, Eye, X } from 'lucide-react';
 
+interface BusinessInfo {
+  fullName: string;
+  businessName: string;
+  businessEmail: string;
+  businessPhone: string;
+  businessAddress: string;
+  businessIndustry: string;
+  businessDescription: string;
+}
+
 interface Subscription {
   _id: string;
   customerName: string;
   customerEmail: string;
   customerPhone: string;
   planName: string;
-  planPrice: string;
-  status: string;
+  planPrice: string; // e.g. "₹4,850"
+  status: string;    // "active" | "cancelled" | ...
   subscriptionId: string;
   createdAt: string;
-  businessInfo?: {
-    fullName: string;
-    businessName: string;
-    businessEmail: string;
-    businessPhone: string;
-    businessAddress: string;
-    businessIndustry: string;
-    businessDescription: string;
-  };
+  businessInfo?: BusinessInfo | null;
 }
 
 export default function Dashboard() {
@@ -64,8 +66,14 @@ export default function Dashboard() {
     }
   };
 
+  const parseINR = (val: string) => {
+    // Remove anything that's not digit or dot
+    const num = Number((val || '0').replace(/[^\d.]/g, ''));
+    return isNaN(num) ? 0 : num;
+  };
+
   const totalRevenue = subscriptions.reduce((sum, sub) => {
-    const price = parseFloat(sub.planPrice.replace('₹', '').replace(',', ''));
+    const price = parseINR(sub.planPrice);
     return sum + (sub.status === 'active' ? price : 0);
   }, 0);
 
@@ -209,6 +217,11 @@ export default function Dashboard() {
                     </td>
                   </tr>
                 ))}
+                {subscriptions.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-6 text-center text-gray-500">No subscriptions found.</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -229,7 +242,7 @@ export default function Dashboard() {
               </button>
             </div>
             <div className="p-6 space-y-6">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">Customer Information</h4>
                   <p><strong>Name:</strong> {selectedSubscription.customerName}</p>
@@ -239,17 +252,24 @@ export default function Dashboard() {
                   <p><strong>Price:</strong> {selectedSubscription.planPrice}</p>
                   <p><strong>Status:</strong> {selectedSubscription.status}</p>
                 </div>
-                {selectedSubscription.businessInfo && (
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Business Information</h4>
-                    <p><strong>Business Name:</strong> {selectedSubscription.businessInfo.businessName}</p>
-                    <p><strong>Industry:</strong> {selectedSubscription.businessInfo.businessIndustry}</p>
-                    <p><strong>Email:</strong> {selectedSubscription.businessInfo.businessEmail}</p>
-                    <p><strong>Phone:</strong> {selectedSubscription.businessInfo.businessPhone}</p>
-                    <p><strong>Address:</strong> {selectedSubscription.businessInfo.businessAddress}</p>
-                  </div>
-                )}
+
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-2">Business Information</h4>
+                  {selectedSubscription.businessInfo ? (
+                    <>
+                      <p><strong>Full Name:</strong> {selectedSubscription.businessInfo.fullName}</p>
+                      <p><strong>Business Name:</strong> {selectedSubscription.businessInfo.businessName}</p>
+                      <p><strong>Industry:</strong> {selectedSubscription.businessInfo.businessIndustry}</p>
+                      <p><strong>Email:</strong> {selectedSubscription.businessInfo.businessEmail}</p>
+                      <p><strong>Phone:</strong> {selectedSubscription.businessInfo.businessPhone}</p>
+                      <p><strong>Address:</strong> {selectedSubscription.businessInfo.businessAddress}</p>
+                    </>
+                  ) : (
+                    <p className="text-gray-500">No business information provided yet.</p>
+                  )}
+                </div>
               </div>
+
               {selectedSubscription.businessInfo && (
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">Business Description</h4>

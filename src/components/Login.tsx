@@ -21,7 +21,7 @@ export default function Login() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (formData.username === 'pushkar' && formData.password === 'pushkar3011') {
+    if (formData.username === 'MySkript' && formData.password === 'MySkript123') {
       localStorage.setItem('isLoggedIn', 'true');
       navigate('/dashboard');
     } else {
@@ -104,14 +104,6 @@ export default function Login() {
             >
               ← Back to Home
             </button>
-          </div>
-
-          <div className="mt-8 p-4 bg-gray-50 rounded-xl">
-            <p className="text-sm text-gray-600 text-center">
-              <strong>Demo Credentials:</strong><br />
-              Username: pushkar<br />
-              Password: pushkar3011
-            </p>
           </div>
         </div>
       </div>
