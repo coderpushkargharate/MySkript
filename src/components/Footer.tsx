@@ -92,9 +92,17 @@ export default function Footer() {
               </li>
               <li>
   <Link to="/login">
-    Login
+   Admin Login
   </Link>
+ 
 </li>
+           <li>
+  <Link to="/userdashboard">
+    User Login
+  </Link>
+ 
+</li>
+ 
             </ul>
           </div>
         </div>
