@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 
 export default function UserDashboard() {
-  const [page, setPage] = useState("login"); // "register" | "login" | "dashboard"
+  const [page, setPage] = useState("login"); // "register" | "login" | "plans" | "dashboard"
   const [form, setForm] = useState({ email: "", phone: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [payload, setPayload] = useState(null);
@@ -20,6 +20,7 @@ export default function UserDashboard() {
   const handleChange = (e) =>
     setForm((s) => ({ ...s, [e.target.name]: e.target.value }));
 
+  /* ---------------- REGISTER ---------------- */
   const handleRegister = async () => {
     if (!form.email || !form.phone || !form.password)
       return alert("Fill all fields");
@@ -41,6 +42,7 @@ export default function UserDashboard() {
     }
   };
 
+  /* ---------------- LOGIN ---------------- */
   const handleLogin = async () => {
     if (!form.email || !form.phone || !form.password)
       return alert("Fill all fields");
@@ -53,9 +55,18 @@ export default function UserDashboard() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Login failed");
+
       localStorage.setItem("authToken", data.token);
-      await fetchDashboard(data.token);
-      setPage("dashboard");
+
+      const dashboard = await fetchDashboard(data.token);
+
+      // Check if subscription exists
+      if (!dashboard?.subscription) {
+        alert("Please create a subscription to continue.");
+        setPage("plans");
+      } else {
+        setPage("dashboard");
+      }
     } catch (err) {
       alert(err.message || "Login failed");
     } finally {
@@ -63,18 +74,21 @@ export default function UserDashboard() {
     }
   };
 
+  /* ---------------- FETCH DASHBOARD ---------------- */
   const fetchDashboard = async (providedToken) => {
     setLoading(true);
     try {
       const t = providedToken || localStorage.getItem("authToken");
       if (!t) throw new Error("No auth token");
+
       const res = await fetch(`${apiBase}/user-dashboard`, {
         headers: { Authorization: `Bearer ${t}` },
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to fetch dashboard");
+
       setPayload(data);
-      setPage("dashboard");
+      return data; // return dashboard info for subscription check
     } catch (err) {
       alert(err.message || "Session expired or error. Please login again.");
       localStorage.removeItem("authToken");
@@ -85,6 +99,7 @@ export default function UserDashboard() {
     }
   };
 
+  /* ---------------- CANCEL SUBSCRIPTION ---------------- */
   const handleCancel = async () => {
     if (!payload?.subscription?.id) return alert("No active subscription");
     if (!window.confirm("Cancel subscription?")) return;
@@ -106,17 +121,20 @@ export default function UserDashboard() {
     }
   };
 
+  /* ---------------- LOGOUT ---------------- */
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     setPayload(null);
     setPage("login");
   };
 
+  /* ---------------- UI RENDER ---------------- */
   if (loading) return <div className="p-8">Loading...</div>;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
       <div className="w-full max-w-2xl bg-white p-8 rounded-2xl shadow">
+        {/* ---------------- REGISTER PAGE ---------------- */}
         {page === "register" && (
           <>
             <h2 className="text-2xl font-bold mb-4">Register</h2>
@@ -163,6 +181,7 @@ export default function UserDashboard() {
           </>
         )}
 
+        {/* ---------------- LOGIN PAGE ---------------- */}
         {page === "login" && (
           <>
             <h2 className="text-2xl font-bold mb-4">Login</h2>
@@ -209,6 +228,37 @@ export default function UserDashboard() {
           </>
         )}
 
+        {/* ---------------- PLANS PAGE ---------------- */}
+        {page === "plans" && (
+          <>
+            <h2 className="text-2xl font-bold mb-4">Choose a Plan</h2>
+            <p className="mb-4 text-gray-600">
+              You need an active subscription to access the dashboard.
+            </p>
+            <div className="space-y-3">
+              <button
+                onClick={() => alert("Plan purchase flow here")}
+                className="w-full bg-blue-500 text-white py-3 rounded-lg"
+              >
+                Standard Plan – ₹4,850 / month
+              </button>
+              <button
+                onClick={() => alert("Plan purchase flow here")}
+                className="w-full bg-purple-500 text-white py-3 rounded-lg"
+              >
+                Premium Plan – ₹7,500 / month
+              </button>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="mt-6 w-full bg-red-600 text-white py-3 rounded-lg"
+            >
+              Logout
+            </button>
+          </>
+        )}
+
+        {/* ---------------- DASHBOARD PAGE ---------------- */}
         {page === "dashboard" && payload && (
           <>
             <h1 className="text-2xl font-bold mb-4">
@@ -263,19 +313,13 @@ export default function UserDashboard() {
                     >
                       Cancel subscription
                     </button>
-                    <button
-                      onClick={() => setPage("register")}
-                      className="px-4 py-2 bg-gray-200 rounded"
-                    >
-                      View Plans
-                    </button>
                   </div>
                 </div>
               ) : (
                 <div className="mt-2">
                   <div>No active subscription</div>
                   <button
-                    onClick={() => setPage("register")}
+                    onClick={() => setPage("plans")}
                     className="mt-2 px-4 py-2 bg-green-500 text-white rounded"
                   >
                     Create subscription

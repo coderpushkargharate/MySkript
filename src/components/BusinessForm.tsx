@@ -77,7 +77,7 @@ export default function BusinessForm() {
               <Building2 className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Business Information</h1>
-            <p className="text-gray-600">Help us understand your business better</p>
+            <p className="text-gray-600">plz provide your business info</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
