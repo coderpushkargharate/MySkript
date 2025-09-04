@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from "react";
 
 export default function UserDashboard() {
-  const [page, setPage] = useState("login"); // "register" | "login" | "plans" | "dashboard"
-  const [form, setForm] = useState({ email: "", phone: "", password: "" });
+  const [page, setPage] = useState("login"); // "register" | "login" | "plans" | "dashboard" | "forgot"
+  const [form, setForm] = useState({ email: "", phone: "", password: "", otp: "", newPassword: "" });
   const [loading, setLoading] = useState(false);
   const [payload, setPayload] = useState(null);
 
@@ -60,7 +60,6 @@ export default function UserDashboard() {
 
       const dashboard = await fetchDashboard(data.token);
 
-      // Check if subscription exists
       if (!dashboard?.subscription) {
         alert("Please create a subscription to continue.");
         setPage("plans");
@@ -88,7 +87,7 @@ export default function UserDashboard() {
       if (!res.ok) throw new Error(data.message || "Failed to fetch dashboard");
 
       setPayload(data);
-      return data; // return dashboard info for subscription check
+      return data;
     } catch (err) {
       alert(err.message || "Session expired or error. Please login again.");
       localStorage.removeItem("authToken");
@@ -126,6 +125,51 @@ export default function UserDashboard() {
     localStorage.removeItem("authToken");
     setPayload(null);
     setPage("login");
+  };
+
+  /* ---------------- FORGOT PASSWORD ---------------- */
+  const handleSendOtp = async () => {
+    if (!form.email) return alert("Enter your registered email");
+    setLoading(true);
+    try {
+      const res = await fetch(`${apiBase}/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: form.email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to send OTP");
+      alert(data.message || "OTP sent to email");
+    } catch (err) {
+      alert(err.message || "Error sending OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!form.email || !form.otp || !form.newPassword)
+      return alert("Fill all fields");
+    setLoading(true);
+    try {
+      const res = await fetch(`${apiBase}/reset-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: form.email,
+          otp: form.otp,
+          newPassword: form.newPassword,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Reset failed");
+      alert(data.message || "Password reset successful! Please login.");
+      setPage("login");
+    } catch (err) {
+      alert(err.message || "Reset failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   /* ---------------- UI RENDER ---------------- */
@@ -223,6 +267,67 @@ export default function UserDashboard() {
                 onClick={() => setPage("register")}
               >
                 Register
+              </span>
+            </p>
+            <p className="mt-2 text-center">
+              <span
+                className="text-red-500 cursor-pointer"
+                onClick={() => setPage("forgot")}
+              >
+                Forgot Password?
+              </span>
+            </p>
+          </>
+        )}
+
+        {/* ---------------- FORGOT PASSWORD PAGE ---------------- */}
+        {page === "forgot" && (
+          <>
+            <h2 className="text-2xl font-bold mb-4">Reset Password</h2>
+            <div className="space-y-4">
+              <input
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="Enter your registered Email"
+                className="w-full px-4 py-3 border rounded-lg"
+              />
+              <button
+                onClick={handleSendOtp}
+                className="w-full bg-blue-500 text-white py-3 rounded-lg"
+              >
+                Send OTP
+              </button>
+              <input
+                name="otp"
+                value={form.otp}
+                onChange={handleChange}
+                placeholder="Enter OTP"
+                className="w-full px-4 py-3 border rounded-lg"
+              />
+              <input
+                name="newPassword"
+                type="password"
+                value={form.newPassword}
+                onChange={handleChange}
+                placeholder="Enter New Password"
+                className="w-full px-4 py-3 border rounded-lg"
+              />
+            </div>
+            <button
+              onClick={handleResetPassword}
+              disabled={loading}
+              className="mt-6 w-full bg-green-600 text-white py-3 rounded-lg"
+            >
+              {loading ? "Resetting..." : "Reset Password"}
+            </button>
+            <p className="mt-3 text-center">
+              Back to{" "}
+              <span
+                className="text-blue-500 cursor-pointer"
+                onClick={() => setPage("login")}
+              >
+                Login
               </span>
             </p>
           </>

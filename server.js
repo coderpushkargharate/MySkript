@@ -7,6 +7,7 @@ import crypto from "crypto";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import nodemailer from "nodemailer";
 
 dotenv.config();
 
@@ -73,8 +74,13 @@ const UserSchema = new mongoose.Schema({
   status: { type: String, default: "trial" }, // trial | active | cancelled | registered
   startDate: { type: Date, default: Date.now },
   nextBilling: Date,
-  passwordHash: String, // may be empty until user registers
+  passwordHash: String,
   createdAt: { type: Date, default: Date.now },
+
+  // Email OTP password reset
+  resetOtpHash: String,          // bcrypt hash of OTP
+  resetOtpExpires: Date,         // expiry time
+  resetOtpAttempts: { type: Number, default: 0 }, // throttle brute force
 });
 
 const BusinessSchema = new mongoose.Schema({
@@ -111,7 +117,46 @@ const planDetails = {
   "plan_R1v1VETXTsHy3p": { name: "Enterprise Plan", price: "₹98,500", period: "year" },
 };
 
-/* ---------------- HELPER: safe compare ---------------- */
+/* ---------------- EMAIL (Nodemailer) ---------------- */
+const hasSmtp =
+  !!process.env.SMTP_HOST &&
+  !!process.env.SMTP_PORT &&
+  !!process.env.SMTP_USER &&
+  !!process.env.SMTP_PASS;
+
+let transporter = null;
+if (hasSmtp) {
+  transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT || 587),
+    secure: !!(process.env.SMTP_SECURE === "true"),
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+}
+
+/** Send OTP email (logs to console in dev if SMTP not set) */
+async function sendOtpEmail(to, otp) {
+  const from = process.env.FROM_EMAIL || "no-reply@myskript.io";
+  const appName = process.env.APP_NAME || "MySkript";
+
+  const subject = `${appName} Password Reset OTP`;
+  const text =
+    `Your ${appName} password reset OTP is: ${otp}\n` +
+    `This OTP is valid for 15 minutes. If you didn't request this, you can ignore this email.`;
+
+  if (transporter) {
+    await transporter.sendMail({ from, to, subject, text });
+  } else {
+    // Safe fallback for development only
+    console.log("📧 [DEV] OTP email (SMTP not configured):");
+    console.log({ to, subject, text });
+  }
+}
+
+/* ---------------- HELPER: safe compare for webhook ---------------- */
 function safeCompareHex(a, b) {
   try {
     if (!a || !b) return false;
@@ -127,7 +172,6 @@ function safeCompareHex(a, b) {
 /* ---------------- WEBHOOK (raw body) ---------------- */
 /*
   Important: keep this route before express.json() so raw body is available.
-  Razorpay sends 'x-razorpay-signature' header which we verify against our webhook secret.
 */
 app.post("/webhook", express.raw({ type: "application/json" }), async (req, res) => {
   try {
@@ -148,7 +192,6 @@ app.post("/webhook", express.raw({ type: "application/json" }), async (req, res)
     const event = JSON.parse(body);
     console.log("✅ Webhook Event:", event.event);
 
-    // Example event handlers
     if (event.event === "subscription.activated") {
       const subId = event.payload?.subscription?.entity?.id;
       if (subId) await User.updateOne({ subscriptionId: subId }, { status: "active" }).exec();
@@ -164,7 +207,6 @@ app.post("/webhook", express.raw({ type: "application/json" }), async (req, res)
       if (subId) await User.updateOne({ subscriptionId: subId }, { status: "cancelled" }).exec();
     }
 
-    // Add more event handling as needed
     res.status(200).send("OK");
   } catch (err) {
     console.error("❌ Webhook error:", err);
@@ -194,7 +236,7 @@ const authenticate = (req, res, next) => {
 app.get("/", (_req, res) => res.send("🚀 Razorpay Subscription Server Running"));
 
 /**
- * Register: used to create a new user or claim an existing subscription-account without password
+ * Register
  * Body: { email, phone, password, name }
  */
 app.post("/register", async (req, res) => {
@@ -272,19 +314,114 @@ app.post("/login", async (req, res) => {
 });
 
 /**
+ * Forgot Password (send OTP to email)
+ * Body: { email }
+ * Returns: { success, message }
+ */
+app.post("/forgot-password", async (req, res) => {
+  try {
+    const { email } = req.body || {};
+    if (!email) return res.status(400).json({ message: "Email required" });
+
+    const user = await User.findOne({ email }).exec();
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // generate 6-digit OTP
+    const otp = (Math.floor(100000 + Math.random() * 900000)).toString();
+
+    // store hash & expiry
+    user.resetOtpHash = await bcrypt.hash(otp, 10);
+    user.resetOtpExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
+    user.resetOtpAttempts = 0;
+    await user.save();
+
+    await sendOtpEmail(email, otp);
+
+    const devNote =
+      process.env.NODE_ENV !== "production"
+        ? " (DEV: OTP logged in server console)"
+        : "";
+
+    res.json({
+      success: true,
+      message: `OTP sent to email${devNote}`,
+    });
+  } catch (err) {
+    console.error("Forgot password error:", err);
+    res.status(500).json({ message: "Forgot password failed" });
+  }
+});
+
+/**
+ * Reset Password (verify OTP)
+ * Body: { email, otp, newPassword }
+ * Returns: { success, message }
+ */
+app.post("/reset-password", async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body || {};
+    if (!email || !otp || !newPassword)
+      return res.status(400).json({ message: "Email, OTP and new password are required" });
+
+    const user = await User.findOne({ email }).exec();
+    if (!user || !user.resetOtpHash || !user.resetOtpExpires) {
+      return res.status(400).json({ message: "No active OTP. Please request a new one." });
+    }
+
+    if (user.resetOtpExpires.getTime() < Date.now()) {
+      // clear expired OTP details
+      user.resetOtpHash = undefined;
+      user.resetOtpExpires = undefined;
+      user.resetOtpAttempts = 0;
+      await user.save();
+      return res.status(400).json({ message: "OTP expired. Please request a new one." });
+    }
+
+    // rudimentary attempt throttle
+    if (user.resetOtpAttempts >= 5) {
+      user.resetOtpHash = undefined;
+      user.resetOtpExpires = undefined;
+      user.resetOtpAttempts = 0;
+      await user.save();
+      return res.status(429).json({ message: "Too many attempts. New OTP required." });
+    }
+
+    const ok = await bcrypt.compare(otp, user.resetOtpHash);
+    if (!ok) {
+      user.resetOtpAttempts = (user.resetOtpAttempts || 0) + 1;
+      await user.save();
+      return res.status(401).json({ message: "Invalid OTP" });
+    }
+
+    // success: update password & clear OTP fields
+    user.passwordHash = await bcrypt.hash(newPassword, 10);
+    user.resetOtpHash = undefined;
+    user.resetOtpExpires = undefined;
+    user.resetOtpAttempts = 0;
+    await user.save();
+
+    res.json({ success: true, message: "Password reset successful. Please login." });
+  } catch (err) {
+    console.error("Reset password error:", err);
+    res.status(500).json({ message: "Reset password failed" });
+  }
+});
+
+/**
  * Create subscription
  * Body: { customer_email, customer_name, customer_phone, plan_id }
- * Can be called before or after user registration.
- */
+ *
+
+/* ---------------- Create Subscription ---------------- */
 app.post("/create-subscription", async (req, res) => {
   try {
-    const { customer_email, customer_name, customer_phone, plan_id } = req.body || {};
+    const { customer_email, customer_name, customer_phone, plan_id, withTrial } = req.body || {};
     if (!customer_email || !customer_phone || !plan_id) {
       return res.status(400).json({ message: "Missing fields" });
     }
 
-    // Try to find existing Razorpay customer by email
-    let customer = null;
+    // Check existing Razorpay customer
+    let customer;
     try {
       const customers = await razorpay.customers.all({ email: customer_email });
       customer = customers.items?.[0];
@@ -301,43 +438,33 @@ app.post("/create-subscription", async (req, res) => {
     }
 
     const now = Math.floor(Date.now() / 1000);
-    const trialEnd = now + 7 * 24 * 60 * 60; // 7 days trial
+    const trialEnd = now + 7 * 24 * 60 * 60;
 
-    const subscription = await razorpay.subscriptions.create({
+    // ✅ If trial → delay start
+    // ✅ Else → start immediately
+    const subscriptionData = {
       plan_id,
       customer_id: customer.id,
-      start_at: trialEnd,
       total_count: 12,
       customer_notify: 1,
-    });
+    };
+    if (withTrial) subscriptionData.start_at = trialEnd;
 
-    // Upsert user in DB
-    const existing = await User.findOne({ email: customer_email }).exec();
+    const subscription = await razorpay.subscriptions.create(subscriptionData);
+
+    // Upsert User in DB
+    let existing = await User.findOne({ email: customer_email }).exec();
     if (!existing) {
-      const newUser = new User({
+      existing = new User({
         customerId: customer.id,
         subscriptionId: subscription.id,
         email: customer_email,
         name: customer_name,
         phone: customer_phone,
         planId: plan_id,
-        status: "trial",
+        status: withTrial ? "trial" : "active",
         startDate: new Date(),
-        nextBilling: new Date(trialEnd * 1000),
-      });
-      await newUser.save();
-
-      // optionally return a token for immediate frontend convenience:
-      const token = jwt.sign({ id: newUser._id, email: customer_email }, process.env.JWT_SECRET, {
-        expiresIn: "30d",
-      });
-
-      return res.json({
-        subscriptionId: subscription.id,
-        customerId: customer.id,
-        key: process.env.RAZORPAY_KEY_ID,
-        token,
-        message: "Subscription created and user created (trial).",
+        nextBilling: withTrial ? new Date(trialEnd * 1000) : new Date(),
       });
     } else {
       existing.customerId = customer.id;
@@ -345,31 +472,35 @@ app.post("/create-subscription", async (req, res) => {
       existing.name = existing.name || customer_name;
       existing.phone = existing.phone || customer_phone;
       existing.planId = plan_id;
-      if (!existing.status) existing.status = "trial";
-      existing.nextBilling = new Date(trialEnd * 1000);
-      await existing.save();
-
-      const token = jwt.sign({ id: existing._id, email: existing.email }, process.env.JWT_SECRET, {
-        expiresIn: "30d",
-      });
-
-      return res.json({
-        subscriptionId: subscription.id,
-        customerId: customer.id,
-        key: process.env.RAZORPAY_KEY_ID,
-        token,
-        message: "Subscription created and linked to existing user (trial).",
-      });
+      existing.status = withTrial ? "trial" : "active";
+      existing.nextBilling = withTrial ? new Date(trialEnd * 1000) : new Date();
     }
+    await existing.save();
+
+    const token = jwt.sign(
+      { id: existing._id, email: customer_email },
+      process.env.JWT_SECRET,
+      { expiresIn: "30d" }
+    );
+
+    res.json({
+      subscriptionId: subscription.id,
+      customerId: customer.id,
+      key: process.env.RAZORPAY_KEY_ID,
+      token,
+      message: withTrial
+        ? "Trial subscription created successfully."
+        : "Direct subscription created successfully.",
+    });
   } catch (err) {
     console.error("Create-subscription error:", err);
     res.status(500).json({ message: "Create subscription failed", error: err.message });
   }
 });
 
+
 /**
  * User dashboard: requires auth
- * Returns stored user info, plan details, biz info and (if possible) fresh Razorpay subscription summary
  */
 app.get("/user-dashboard", authenticate, async (req, res) => {
   try {
@@ -383,7 +514,6 @@ app.get("/user-dashboard", authenticate, async (req, res) => {
         subscription = {
           id: sub.id,
           status: sub.status,
-          // normalized timestamps in ms for frontend:
           currentStartMs: sub.current_start ? sub.current_start * 1000 : null,
           currentEndMs: sub.current_end ? sub.current_end * 1000 : null,
         };
@@ -411,7 +541,6 @@ app.post("/cancel-subscription", authenticate, async (req, res) => {
     const { subscription_id } = req.body || {};
     if (!subscription_id) return res.status(400).json({ message: "subscription_id is required" });
 
-    // Ensure subscription belongs to the authenticated user
     const user = await User.findOne({ email: req.user.email }).exec();
     if (!user || user.subscriptionId !== subscription_id) {
       return res.status(403).json({ message: "Not allowed" });
@@ -439,43 +568,22 @@ app.post("/cancel-subscription", authenticate, async (req, res) => {
 });
 
 /**
- * Save business info (no auth required in this implementation; change as needed)
- * Body: { customerId, customerName, customerEmail, customerPhone, fullName, businessName, businessAddress, businessEmail, businessPhone, businessIndustry, businessDescription }
+ * Save business info
+ * Body: { customerId, customerName, customerEmail, ... }
  */
 app.post("/save-business-info", async (req, res) => {
   try {
     const {
-      customerId,
-      customerName,
       customerEmail,
-      customerPhone,
-      fullName,
       businessName,
-      businessAddress,
       businessEmail,
-      businessPhone,
-      businessIndustry,
-      businessDescription,
     } = req.body || {};
 
     if (!customerEmail || !businessName || !businessEmail) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    const newBusiness = new Business({
-      customerId,
-      customerName,
-      customerEmail,
-      customerPhone,
-      fullName,
-      businessName,
-      businessAddress,
-      businessEmail,
-      businessPhone,
-      businessIndustry,
-      businessDescription,
-    });
-
+    const newBusiness = new Business(req.body);
     await newBusiness.save();
 
     res.status(201).json({ success: true, message: "Business info saved successfully" });
@@ -487,7 +595,6 @@ app.post("/save-business-info", async (req, res) => {
 
 /**
  * Get all subscriptions (admin-like)
- * Joins user data with business info by email and attempts to refresh status from Razorpay
  */
 app.get("/get-all-subscriptions", async (_req, res) => {
   try {
