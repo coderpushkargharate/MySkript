@@ -318,37 +318,35 @@ app.post("/login", async (req, res) => {
  * Body: { email }
  * Returns: { success, message }
  */
+/**
+/**
+ * Forgot Password (send OTP to email)
+ */
 app.post("/forgot-password", async (req, res) => {
   try {
     const { email } = req.body || {};
-    if (!email) return res.status(400).json({ message: "Email required" });
+    if (!email)
+      return res.status(400).json({ message: "Email is required" });
 
     const user = await User.findOne({ email }).exec();
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user)
+      return res.status(404).json({ message: "User not found" });
 
     // generate 6-digit OTP
     const otp = (Math.floor(100000 + Math.random() * 900000)).toString();
 
     // store hash & expiry
     user.resetOtpHash = await bcrypt.hash(otp, 10);
-    user.resetOtpExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
+    user.resetOtpExpires = new Date(Date.now() + 15 * 60 * 1000);
     user.resetOtpAttempts = 0;
     await user.save();
 
-    await sendOtpEmail(email, otp);
+    await sendOtpEmail(email, otp); // 👉 SMTP error may occur here
 
-    const devNote =
-      process.env.NODE_ENV !== "production"
-        ? " (DEV: OTP logged in server console)"
-        : "";
-
-    res.json({
-      success: true,
-      message: `OTP sent to email${devNote}`,
-    });
+    res.json({ success: true, message: "OTP has been sent to your email ✅" });
   } catch (err) {
-    console.error("Forgot password error:", err);
-    res.status(500).json({ message: "Forgot password failed" });
+    console.error("Forgot password error:", err); // 👉 Error will be visible here
+    res.status(500).json({ message: "Problem while sending OTP ❌" });
   }
 });
 
@@ -361,11 +359,15 @@ app.post("/reset-password", async (req, res) => {
   try {
     const { email, otp, newPassword } = req.body || {};
     if (!email || !otp || !newPassword)
-      return res.status(400).json({ message: "Email, OTP and new password are required" });
+      return res
+        .status(400)
+        .json({ message: "Email, OTP, and new password are required" });
 
     const user = await User.findOne({ email }).exec();
     if (!user || !user.resetOtpHash || !user.resetOtpExpires) {
-      return res.status(400).json({ message: "No active OTP. Please request a new one." });
+      return res
+        .status(400)
+        .json({ message: "No active OTP found. Please request a new one." });
     }
 
     if (user.resetOtpExpires.getTime() < Date.now()) {
@@ -374,16 +376,7 @@ app.post("/reset-password", async (req, res) => {
       user.resetOtpExpires = undefined;
       user.resetOtpAttempts = 0;
       await user.save();
-      return res.status(400).json({ message: "OTP expired. Please request a new one." });
-    }
-
-    // rudimentary attempt throttle
-    if (user.resetOtpAttempts >= 5) {
-      user.resetOtpHash = undefined;
-      user.resetOtpExpires = undefined;
-      user.resetOtpAttempts = 0;
-      await user.save();
-      return res.status(429).json({ message: "Too many attempts. New OTP required." });
+      return res.status(400).json({ message: "OTP has expired. Please request a new one." });
     }
 
     const ok = await bcrypt.compare(otp, user.resetOtpHash);
@@ -400,12 +393,13 @@ app.post("/reset-password", async (req, res) => {
     user.resetOtpAttempts = 0;
     await user.save();
 
-    res.json({ success: true, message: "Password reset successful. Please login." });
+    res.json({ success: true, message: "Password successfully reset ✅" });
   } catch (err) {
-    console.error("Reset password error:", err);
-    res.status(500).json({ message: "Reset password failed" });
+    console.error("Reset password error:", err); // 👉 Error will be visible here
+    res.status(500).json({ message: "Problem while resetting password ❌" });
   }
 });
+
 
 /**
  * Create subscription
@@ -440,8 +434,7 @@ app.post("/create-subscription", async (req, res) => {
     const now = Math.floor(Date.now() / 1000);
     const trialEnd = now + 7 * 24 * 60 * 60;
 
-    // ✅ If trial → delay start
-    // ✅ Else → start immediately
+    // ✅ Trial → delay start | Else → start immediately
     const subscriptionData = {
       plan_id,
       customer_id: customer.id,
@@ -477,6 +470,21 @@ app.post("/create-subscription", async (req, res) => {
     }
     await existing.save();
 
+    // Send emails after saving
+    try {
+      await sendSubscriptionEmails({
+        customer_name: customer_name || existing.name || "",
+        customer_email: customer_email || existing.email || "",
+        customer_phone: customer_phone || existing.phone || "",
+        plan_id: plan_id,
+        subscription_id: subscription.id,
+        withTrial: !!withTrial,
+      });
+    } catch (e) {
+      console.warn("📧 Subscription email send failed:", e?.message || e);
+    }
+
+    // JWT token
     const token = jwt.sign(
       { id: existing._id, email: customer_email },
       process.env.JWT_SECRET,
@@ -566,6 +574,115 @@ app.post("/cancel-subscription", authenticate, async (req, res) => {
     res.status(500).json({ message: "Cancel subscription failed" });
   }
 });
+
+
+/** Send plain email */
+async function sendEmail({ to, subject, text, html }) {
+  if (!transporter) {
+    console.log("📧 [DEV] Email (SMTP not configured):", { to, subject, text });
+    return;
+  }
+  const from = process.env.FROM_EMAIL || "no-reply@myskript.io";
+  await transporter.sendMail({ from, to, subject, text, html });
+}
+
+/** Subscription email templates */
+function buildSubscriptionEmails({ customer_name, customer_email, customer_phone, plan_id, subscription_id, withTrial }) {
+  const plan = planDetails[plan_id] || {};
+  const appName = process.env.APP_NAME || "MySkript";
+  const trialMsg = withTrial
+    ? `✅ 7-Day Free Trial has started. After the trial ends, auto-deduction will occur (${plan.price} / ${plan.period}).`
+    : `✅ Direct subscription was successful. Next billing: ${plan.price} / ${plan.period}.`;
+
+  const userSubject = `${appName}: Subscription Created (${plan.name || "Selected Plan"})`;
+  const userText =
+`${customer_name}, Hello!
+
+Your subscription has been successfully created.
+
+Plan: ${plan.name || "-"}
+Price/Period: ${plan.price || "-"} / ${plan.period || "-"}
+Subscription ID: ${subscription_id}
+Email: ${customer_email}
+Phone: ${customer_phone}
+
+${trialMsg}
+
+If you have any questions, reply to this email.
+Thank you,
+${appName} Team`;
+
+  const userHtml = `
+  <div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6">
+    <p>${customer_name}, Hello!</p>
+    <p>Your <b>subscription</b> has been successfully created.</p>
+    <ul>
+      <li><b>Plan:</b> ${plan.name || "-"}</li>
+      <li><b>Price/Period:</b> ${plan.price || "-"} / ${plan.period || "-"}</li>
+      <li><b>Subscription ID:</b> ${subscription_id}</li>
+      <li><b>Email:</b> ${customer_email}</li>
+      <li><b>Phone:</b> ${customer_phone}</li>
+    </ul>
+    <p>${trialMsg}</p>
+    <p>If you have any questions, reply to this email.</p>
+    <p>Thank you,<br/>${appName} Team</p>
+  </div>`;
+
+  const adminSubject = `${appName}: New Subscription - ${plan.name || "Plan"} (${customer_email})`;
+  const adminText =
+`New subscription created:
+
+Customer: ${customer_name}
+Email: ${customer_email}
+Phone: ${customer_phone}
+Plan: ${plan.name || "-"}
+Price/Period: ${plan.price || "-"} / ${plan.period || "-"}
+Subscription ID: ${subscription_id}
+Mode: ${withTrial ? "TRIAL (₹5 reg fee)" : "DIRECT"}
+
+— Server notification`;
+
+  const adminHtml = `
+  <div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6">
+    <h3>New subscription created</h3>
+    <ul>
+      <li><b>Customer:</b> ${customer_name}</li>
+      <li><b>Email:</b> ${customer_email}</li>
+      <li><b>Phone:</b> ${customer_phone}</li>
+      <li><b>Plan:</b> ${plan.name || "-"}</li>
+      <li><b>Price/Period:</b> ${plan.price || "-"} / ${plan.period || "-"}</li>
+      <li><b>Subscription ID:</b> ${subscription_id}</li>
+      <li><b>Mode:</b> ${withTrial ? "TRIAL (₹5 reg fee)" : "DIRECT"}</li>
+    </ul>
+  </div>`;
+
+  return {
+    user: { subject: userSubject, text: userText, html: userHtml },
+    admin: { subject: adminSubject, text: adminText, html: adminHtml }
+  };
+}
+
+/** Send both user + admin emails */
+async function sendSubscriptionEmails(payload) {
+  const { user, admin } = buildSubscriptionEmails(payload);
+
+  // User email
+  await sendEmail({
+    to: payload.customer_email,
+    subject: user.subject,
+    text: user.text,
+    html: user.html,
+  });
+
+  // Admin email
+  await sendEmail({
+    to: "myskript.infotech@gmail.com",
+    subject: admin.subject,
+    text: admin.text,
+    html: admin.html,
+  });
+}
+
 
 /**
  * Save business info
