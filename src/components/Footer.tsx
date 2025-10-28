@@ -1,21 +1,21 @@
 import { Link } from "react-router-dom";
-
+import { HashLink } from "react-router-hash-link";
 export default function Footer() {
   return (
     <footer className="bg-[#fdfdfb] px-8 md:px-40 pt-12 pb-6">
       <div className="flex flex-col md:flex-row justify-between gap-10">
-        
+
         {/* Left Side */}
         <div className="max-w-sm">
           <div className="mb-4">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2">
+            <HashLink smooth to="/#hero" className="flex items-center space-x-2">
               <img
                 src="/assets/img/Myskript Logos.png"
                 alt="myskript logo"
                 className="h-12 w-auto"
               />
-            </Link>
+            </HashLink>
           </div>
           <h3 className="text-[20px] mb-2">Myskript Infotech LLP</h3>
           <p className="text-lg text-gray-600 leading-relaxed">
@@ -32,18 +32,19 @@ export default function Footer() {
 
         {/* Right Side */}
         <div className="flex flex-col sm:flex-row gap-20">
-          
+
           {/* Features */}
           <div>
             <h4 className="text-[16px] font-semibold mb-4">Features</h4>
             <ul className="space-y-2 text-lg text-gray-600">
-              <li><Link to="/features">CRM</Link></li>
-              <li><Link to="/automations">Automations</Link></li>
-              <li><Link to="/funnels">Funnels</Link></li>
-              <li><Link to="/webinars">Webinars</Link></li>
-              <li><Link to="/more">And Many More</Link></li>
-              <li><Link to="/trial">Get A Trial</Link></li>
-            </ul>
+  <li><a href="#hero">CRM</a></li>
+  <li><a href="#hero">Automations</a></li>
+  <li><a href="#hero">Funnels</a></li>
+  <li><a href="#hero">Webinars</a></li>
+  <li><a href="#hero">And Many More</a></li>
+  <li><a href="#hero">Get A Trial</a></li>
+</ul>
+
           </div>
 
           {/* Pages */}
@@ -56,6 +57,12 @@ export default function Footer() {
               <li><a href="#clients">Clients</a></li>
               <li><a href="#integrations">Integrations</a></li>
               <li><Link to="/terms">Privacy Policy</Link></li>
+              <li>
+                <Link to="/login">
+                  Admin Login
+                </Link>
+
+              </li>
             </ul>
           </div>
 
@@ -64,45 +71,32 @@ export default function Footer() {
             <h4 className="text-[16px] font-semibold mb-4">Social</h4>
             <ul className="space-y-2 text-lg text-gray-600">
               <li>
-                <a 
-                  href="https://www.instagram.com/myskript.io/" 
-                  target="_blank" 
+                <a
+                  href="https://www.instagram.com/myskript.io/"
+                  target="_blank"
                   rel="noopener noreferrer"
                 >
                   Instagram
                 </a>
               </li>
               <li>
-                <a 
-                  href="https://www.linkedin.com/" 
-                  target="_blank" 
+                <a
+                  href="https://www.linkedin.com/"
+                  target="_blank"
                   rel="noopener noreferrer"
                 >
                   LinkedIn
                 </a>
               </li>
               <li>
-                <a 
-                  href="https://www.facebook.com/people/Myskriptio/61578113819764/" 
-                  target="_blank" 
+                <a
+                  href="https://www.facebook.com/people/Myskriptio/61578113819764/"
+                  target="_blank"
                   rel="noopener noreferrer"
                 >
                   Facebook
                 </a>
               </li>
-              <li>
-  <Link to="/login">
-   Admin Login
-  </Link>
- 
-</li>
-           <li>
-  <Link to="/userdashboard">
-    User Login
-  </Link>
- 
-</li>
- 
             </ul>
           </div>
         </div>

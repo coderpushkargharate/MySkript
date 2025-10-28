@@ -16,7 +16,7 @@ import WhyChooseUs from './WhyChooseUs';
 export default function HeroSection() {
   return (
     <>
-    <section className="relative overflow-hidden bg-white pt-16 pb-10 sm:pt-10 lg:pt-32 " id='home'>
+    <section className="relative overflow-hidden bg-white pt-16 pb-10 sm:pt-10 lg:pt-32 " id='hero'>
       {/* Top Gradient */}
       <div className="absolute top-0 left-0 w-[300px] h-[300px] bg-orange-100 blur-[120px] rounded-full opacity-60 z-0" />
 
@@ -53,18 +53,29 @@ export default function HeroSection() {
 
 
     {/* Heading */}
-<h1 className="text-[30px] sm:text-[40px] lg:text-[60px] font-bold text-gray-900 leading-[1.2] mb-4">
+<h1
+  style={{
+    fontFamily: '"Roboto Slab", serif',
+    fontOpticalSizing: "auto",
+    fontWeight: 700, // adjust 100–900 based on what you need
+    fontStyle: "normal",
+  }}
+  className="text-[30px] sm:text-[40px] lg:text-[60px] font-bold text-gray-900 leading-[1.2] mb-4"
+>
   Simplest System Ever Built to <br className="hidden sm:inline" />
   Automate &amp; Scale Your Business <br className="hidden sm:inline" />
   <span className="text-black">without Limits.</span>
 </h1>
         {/* Paragraph */}
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-6">
-          Scale Your Business with a Comprehensive Suite of Tools that Slash <br />
-          Costs at-least by 80% and Amplify Results with AI Precision Tracking
-        </p>
+        <p
+  className="text-gray-600 max-w-2xl mx-auto mb-6"
+  style={{ fontSize: "1.2rem",color:"#939393", fontWeight: 600 }}
+>
+  Scale Your Business with a Comprehensive Suite of Tools that Slash <br />
+  Costs at-least by 80% and Amplify Results with AI Precision Tracking
+</p>
         {/* Benefits */}
-        <div className="flex flex-wrap justify-center gap-6 text-sm font-medium text-gray-700 mb-6">
+        <div className="flex flex-wrap justify-center gap-6 text-sm font-medium text-gray-700 mb-6" style={{ fontSize: "1.1rem", fontWeight: 600 }}>
           <div className="flex items-center gap-2">
             <img src="./assets/img/y8BBNbAsFSb2eCv8Of7CxxTLGOc.svg" alt="support" width="20" height="20" />
             24*7 Support
@@ -88,12 +99,12 @@ export default function HeroSection() {
   controls
   className="rounded-[20px] shadow-lg mx-auto mb-3 s"
 >
-  <source src="/assets/Myskript_16_9_Video_01_R1.mp4" type="video/mp4" />
+  <source src="/Myskript_16_9_Video_01_R2.mp4" type="video/mp4" />
   Your browser does not support the video tag.
 </video>
      {/* Buttons */}
 <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginBottom: "1.5rem" }}>
-  <button
+<a href="#features">  <button
     style={{
       padding: "10px 28px",
       borderRadius: "18px",
@@ -109,7 +120,7 @@ export default function HeroSection() {
     onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
   >
     Learn More →
-  </button>
+  </button></a>
 
   <a href="#pricing"><button
     style={{
