@@ -16,8 +16,11 @@ export default function Header() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white py-3 rounded-full shadow-md px-8 
-       mx-auto max-w-[80rem] mt-4">
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 bg-white py-3 px-8 mx-auto max-w-[80rem] mt-4 transition-all duration-300 ${
+          isMenuOpen ? 'rounded-none shadow-none' : 'rounded-full shadow-md'
+        }`}
+      >
         <div className="flex items-center justify-between">
           {/* Logo */}
           <HashLink smooth to="/#hero" className="flex items-center space-x-2">
