@@ -5,11 +5,11 @@ import jsPDF from "jspdf";
 /* ================= IMAGE BOX ================= */
 const ImageBox = ({ image, onUpload, label }) => {
   return (
-    <div className="w-[230px] h-[310px] border border-gray-400 bg-gray-50 flex items-center justify-center relative">
+    <div className="w-full sm:w-[230px] h-[310px] border-2 border-gray-300 bg-white flex items-center justify-center relative overflow-hidden rounded-lg shadow-sm">
       {image ? (
-        <img src={image} className="w-full h-full object-contain" alt="Uploaded" />
+        <img src={image} className="w-full h-full object-contain p-1" alt="Uploaded" />
       ) : (
-        <label className="text-xs text-gray-500 cursor-pointer text-center px-2">
+        <label className="text-xs text-gray-500 cursor-pointer text-center px-2 font-medium">
           {label || "Upload image"}
           {onUpload && <input type="file" className="hidden" onChange={onUpload} />}
         </label>
@@ -75,14 +75,6 @@ const AssessmentReport = () => {
         "The thighs are not parallel to the ground\nLack of strength might be the reason behind unable to complete the movement smoothly",
       score: "30/100",
     },
-    // {
-    //   title: "Neck movement",
-    //   key: "move5",
-    //   idealImage: "/assets/ideal/move5.png",
-    //   comments:
-    //     "While doing side flexion of the neck towards right\nIt is pretty visible that the left shoulder is compensating the movements due to tightness in the neck side flexors",
-    //   score: "50/100",
-    // },
   ]);
 
   // Uploaded images for movements
@@ -90,6 +82,9 @@ const AssessmentReport = () => {
 
   // Extra dynamic sections (NEW)
   const [extraSections, setExtraSections] = useState([]);
+
+  // Shared comment for all extra sections
+  const [sharedExtraComment, setSharedExtraComment] = useState("Enter common comments for all additional assessments...");
 
   /* ================= HANDLE IMAGE UPLOADS ================= */
   const handleUpload = (key, e) => {
@@ -117,113 +112,200 @@ const AssessmentReport = () => {
         leftImg: "",
         rightImg: "",
         comments: "Enter comments here...",
-        score: "0/100", // Optional: add score field
+        score: "0/100",
       },
     ]);
   };
 
-  /* ================= PDF DOWNLOAD (MULTI-PAGE SUPPORT) ================= */
+  /* ================= REMOVE SECTION ================= */
+  const removeSection = (id) => {
+    setExtraSections(extraSections.filter(section => section.id !== id));
+  };
+
+  /* ================= CALCULATE TOTAL PROGRESS ================= */
+  const calculateTotalProgress = () => {
+    let totalScore = 0;
+    let maxScore = 0;
+
+    movements.forEach(move => {
+      const scoreStr = move.score;
+      const parts = scoreStr.split('/');
+      if (parts.length === 2) {
+        const score = parseFloat(parts[0]);
+        const max = parseFloat(parts[1]);
+        if (!isNaN(score) && !isNaN(max)) {
+          totalScore += score;
+          maxScore += max;
+        }
+      }
+    });
+
+    extraSections.forEach(section => {
+      const scoreStr = section.score;
+      const parts = scoreStr.split('/');
+      if (parts.length === 2) {
+        const score = parseFloat(parts[0]);
+        const max = parseFloat(parts[1]);
+        if (!isNaN(score) && !isNaN(max)) {
+          totalScore += score;
+          maxScore += max;
+        }
+      }
+    });
+
+    if (maxScore === 0) return { percentage: 0, total: 0, max: 0 };
+
+    const percentage = (totalScore / maxScore) * 100;
+    return {
+      percentage: Math.round(percentage),
+      total: Math.round(totalScore),
+      max: Math.round(maxScore)
+    };
+  };
+
+  const totalProgress = calculateTotalProgress();
+
+  /* ================= PDF DOWNLOAD (MULTI-PAGE WITH HEADER/FOOTER) ================= */
   const downloadPDF = async () => {
     const element = reportRef.current;
     if (!element) return;
 
-    const canvas = await html2canvas(element, {
-      scale: 2,
-      useCORS: true,
-      logging: false,
-    });
+    element.classList.add('pdf-generating');
 
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF("p", "mm", "a4");
+    try {
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+      });
 
-    const pageWidth = 210;
-    const pageHeight = 297;
-    const imgWidth = pageWidth;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
 
-    let heightLeft = imgHeight;
-    let position = 0;
+      const pageWidth = 210;
+      const pageHeight = 297;
+      const imgWidth = pageWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
+      let heightLeft = imgHeight;
+      let position = 0;
+      let pageNum = 1;
 
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight + 10; // Adjust to avoid cutoff
-      pdf.addPage();
       pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-    }
+      addFooter(pdf, pageNum, pageWidth, pageHeight);
 
-    pdf.save("Assessment_Report.pdf");
+      heightLeft -= pageHeight;
+
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight + 10;
+        pdf.addPage();
+        pageNum++;
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        addFooter(pdf, pageNum, pageWidth, pageHeight);
+        heightLeft -= pageHeight;
+      }
+
+      pdf.save("Assessment_Report.pdf");
+    } finally {
+      element.classList.remove('pdf-generating');
+    }
+  };
+
+  // Helper function to add footer
+  const addFooter = (pdf, pageNum, pageWidth, pageHeight) => {
+    pdf.setFontSize(8);
+    pdf.setTextColor(150);
+    const footerText = `Generated by Healing Monk | Page ${pageNum}`;
+    const textWidth = pdf.getTextWidth(footerText);
+    pdf.text(footerText, pageWidth - textWidth - 10, pageHeight - 10);
   };
 
   return (
     <>
       <div
         ref={reportRef}
-        className="w-[794px] mx-auto bg-white text-[13px] font-sans p-8 space-y-10"
+        className="w-full max-w-[794px] mx-auto bg-white text-[13px] font-sans p-4 sm:p-8 space-y-8 sm:space-y-10 border border-gray-200"
       >
+        {/* ================= COMPANY LOGO HEADER ================= */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 pb-3 sm:pb-4 border-b border-gray-300 gap-3">
+          <div className="flex items-center space-x-3 sm:space-x-4">
+            <div className="w-32 sm:w-40 h-auto">
+              <img src="/WhatsApp Image 2025-12-27 at 21.35.56_c38523a6.jpg" alt="Healing Monk Logo" className="object-contain" />
+            </div>
+          </div>
+          <div className="text-right text-xs text-gray-500">
+            Report Generated: {new Date().toLocaleDateString()}
+          </div>
+        </div>
+
         {/* ================= TITLE ================= */}
-        <h1 className="text-center font-bold text-lg">
-          Assessment report of{" "}
+        <h1 className="text-center font-bold text-xl text-gray-800 border-b pb-2">
+          Assessment Report of{" "}
           <span
             contentEditable
             suppressContentEditableWarning
             onBlur={(e) =>
               setPatientInfo({ ...patientInfo, name: e.target.innerText })
             }
+            className="inline-block px-1 border-b border-dashed border-gray-400"
           >
             {patientInfo.name}
           </span>
         </h1>
 
         {/* ================= PATIENT INFO ================= */}
-        {[
-          ["Age", "age"],
-          ["Ht", "height"],
-          ["Wt", "weight"],
-          ["Occupation", "occupation"],
-          ["Place", "place"],
-          ["Previous medical history", "medicalHistory"],
-          ["Previous surgical history", "surgicalHistory"],
-        ].map(([label, key]) => (
-          <p key={key}>
-            <b>{label} – </b>
-            <span
-              contentEditable
-              suppressContentEditableWarning
-              onBlur={(e) =>
-                setPatientInfo({
-                  ...patientInfo,
-                  [key]: e.target.innerText,
-                })
-              }
-            >
-              {patientInfo[key]}
-            </span>
-          </p>
-        ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          {[
+            ["Age", "age"],
+            ["Height", "height"],
+            ["Weight", "weight"],
+            ["Occupation", "occupation"],
+            ["Place", "place"],
+            ["Medical History", "medicalHistory"],
+            ["Surgical History", "surgicalHistory"],
+          ].map(([label, key]) => (
+            <div key={key} className="flex items-start">
+              <b className="text-gray-700 w-32 sm:w-36 flex-shrink-0">{label}:</b>
+              <span
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={(e) =>
+                  setPatientInfo({
+                    ...patientInfo,
+                    [key]: e.target.innerText,
+                  })
+                }
+                className="flex-1 border-b border-dashed border-gray-400 min-h-[20px] px-1"
+              >
+                {patientInfo[key]}
+              </span>
+            </div>
+          ))}
+        </div>
 
         {/* ================= CHIEF COMPLAINTS ================= */}
-        <p
-          className="mt-3"
-          contentEditable
-          suppressContentEditableWarning
-          onBlur={(e) =>
-            setPatientInfo({
-              ...patientInfo,
-              chiefComplaints: e.target.innerText,
-            })
-          }
-        >
-          {patientInfo.chiefComplaints}
-        </p>
+        <div>
+          <h3 className="font-semibold text-gray-800 mb-2">Chief Complaints:</h3>
+          <div
+            className="whitespace-pre-wrap border border-gray-300 p-3 rounded-md min-h-[80px] bg-gray-50"
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) =>
+              setPatientInfo({
+                ...patientInfo,
+                chiefComplaints: e.target.innerText,
+              })
+            }
+          >
+            {patientInfo.chiefComplaints}
+          </div>
+        </div>
 
         {/* ================= POSTURE COMMENTS ================= */}
         <div>
-          <b>Comments –</b>
+          <h3 className="font-semibold text-gray-800 mb-2">Posture Assessment:</h3>
           <div
-            className="whitespace-pre-wrap border p-2 min-h-[60px]"
+            className="whitespace-pre-wrap border border-gray-300 p-3 rounded-md min-h-[80px] bg-gray-50"
             contentEditable
             suppressContentEditableWarning
             onBlur={(e) => setPostureComments(e.target.innerText)}
@@ -232,111 +314,207 @@ const AssessmentReport = () => {
           </div>
         </div>
 
+        {/* ================= TOTAL PROGRESS BAR ================= */}
+        <div className="border-t pt-5 sm:pt-6 pb-4">
+          <h3 className="font-semibold text-gray-800 mb-3">Overall Progress Summary</h3>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+            <div className="w-full sm:flex-1">
+              <div className="bg-gray-200 rounded-full h-4">
+                <div
+                  className={`h-4 rounded-full transition-all duration-300 ${
+                    totalProgress.percentage >= 70
+                      ? "bg-green-500"
+                      : totalProgress.percentage >= 40
+                      ? "bg-yellow-500"
+                      : "bg-red-500"
+                  }`}
+                  style={{ width: `${totalProgress.percentage}%` }}
+                ></div>
+              </div>
+              <div className="mt-1 text-sm text-gray-600">
+                {totalProgress.total} / {totalProgress.max} ({totalProgress.percentage}%)
+              </div>
+            </div>
+            <div className="text-right sm:text-left w-full sm:w-auto">
+              <span className="block text-xs text-gray-500">Performance Level</span>
+              <span className={`font-bold ${
+                totalProgress.percentage >= 70
+                  ? "text-green-600"
+                  : totalProgress.percentage >= 40
+                  ? "text-yellow-600"
+                  : "text-red-600"
+              }`}>
+                {totalProgress.percentage >= 70 ? "Good" : totalProgress.percentage >= 40 ? "Fair" : "Needs Improvement"}
+              </span>
+            </div>
+          </div>
+        </div>
+
         {/* ================= MOVEMENTS ================= */}
-        <h2 className="text-center font-bold">MOVEMENTS</h2>
+        <h2 className="text-center font-bold text-xl text-gray-800 pt-4 pb-2 border-t border-gray-300">MOVEMENT ASSESSMENT</h2>
         {movements.map((move, index) => (
-          <div key={move.key} className="space-y-3">
-            <div className="flex justify-between">
-              <ImageBox
-                label={move.title}
-                image={images[move.key]}
-                onUpload={(e) => handleUpload(move.key, e)}
-              />
-              <ImageBox image={move.idealImage} />
+          <div key={move.key} className="border border-gray-200 rounded-lg p-3 sm:p-4 space-y-3 mb-4">
+            <div className="flex flex-col sm:flex-row justify-between gap-4">
+              <div className="flex-1">
+                <h4 className="font-semibold text-gray-800 mb-2">{move.title}</h4>
+                <div className="mb-2">
+                  <b>Score:</b>
+                  <span
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={(e) => {
+                      const copy = [...movements];
+                      copy[index].score = e.target.innerText;
+                      setMovements(copy);
+                    }}
+                    className="ml-2 inline-block border-b border-dashed border-gray-400 px-1"
+                  >
+                    {move.score}
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                <ImageBox
+                  label="Your Image"
+                  image={images[move.key]}
+                  onUpload={(e) => handleUpload(move.key, e)}
+                />
+                <ImageBox
+                  label="Ideal Form"
+                  image={move.idealImage}
+                />
+              </div>
             </div>
 
-            <b>Comments –</b>
-            <div
-              className="whitespace-pre-wrap border p-2 min-h-[60px]"
-              contentEditable
-              suppressContentEditableWarning
-              onBlur={(e) => {
-                const copy = [...movements];
-                copy[index].comments = e.target.innerText;
-                setMovements(copy);
-              }}
-            >
-              {move.comments}
-            </div>
-
-            <b>Score –</b>
-            <div
-              contentEditable
-              suppressContentEditableWarning
-              onBlur={(e) => {
-                const copy = [...movements];
-                copy[index].score = e.target.innerText;
-                setMovements(copy);
-              }}
-            >
-              {move.score}
+            <div>
+              <b className="text-gray-700">Comments:</b>
+              <div
+                className="whitespace-pre-wrap border border-gray-300 p-2 rounded-md mt-1 bg-white min-h-[60px]"
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={(e) => {
+                  const copy = [...movements];
+                  copy[index].comments = e.target.innerText;
+                  setMovements(copy);
+                }}
+              >
+                {move.comments}
+              </div>
             </div>
           </div>
         ))}
 
         {/* ================= EXTRA DYNAMIC SECTIONS (TWO IMAGE UPLOADS) ================= */}
         {extraSections.map((section, index) => (
-          <div key={section.id} className="border-t pt-6 space-y-4">
-            
-            <div className="flex justify-between">
-              <ImageBox
-                label="Upload Left Image"
-                image={section.leftImg}
-                onUpload={(e) => handleExtraSectionImageUpload(index, "leftImg", e)}
-              />
-              <ImageBox
-                label="Upload Right Image"
-                image={section.rightImg}
-                onUpload={(e) => handleExtraSectionImageUpload(index, "rightImg", e)}
-              />
+          <div key={section.id} className="border-t pt-5 sm:pt-6 space-y-4 border-gray-200">
+            <div className="flex flex-col sm:flex-row justify-between gap-4">
+              <div className="flex-1">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 gap-2">
+                  <h4 className="font-semibold text-gray-800">Additional Assessment {index + 1}</h4>
+                  <span className="no-print">
+                    <button
+                      onClick={() => removeSection(section.id)}
+                      className="text-xs text-red-600 hover:text-red-800 font-medium"
+                    >
+                      Remove
+                    </button>
+                  </span>
+                </div>
+                <div className="mb-2">
+                  <b>Score:</b>
+                  <span
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={(e) => {
+                      const copy = [...extraSections];
+                      copy[index].score = e.target.innerText;
+                      setExtraSections(copy);
+                    }}
+                    className="ml-2 inline-block border-b border-dashed border-gray-400 px-1"
+                  >
+                    {section.score}
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                <ImageBox
+                  label="Left View"
+                  image={section.leftImg}
+                  onUpload={(e) => handleExtraSectionImageUpload(index, "leftImg", e)}
+                />
+                <ImageBox
+                  label="Right View"
+                  image={section.rightImg}
+                  onUpload={(e) => handleExtraSectionImageUpload(index, "rightImg", e)}
+                />
+              </div>
             </div>
 
-            <b>Comments –</b>
-            <div
-              className="whitespace-pre-wrap border p-2 min-h-[60px]"
-              contentEditable
-              suppressContentEditableWarning
-              onBlur={(e) => {
-                const copy = [...extraSections];
-                copy[index].comments = e.target.innerText;
-                setExtraSections(copy);
-              }}
-            >
-              {section.comments}
-            </div>
-
-            <b>Score –</b>
-            <div
-              contentEditable
-              suppressContentEditableWarning
-              onBlur={(e) => {
-                const copy = [...extraSections];
-                copy[index].score = e.target.innerText;
-                setExtraSections(copy);
-              }}
-            >
-              {section.score}
+            <div>
+              <b className="text-gray-700">Comments:</b>
+              <div
+                className="whitespace-pre-wrap border border-gray-300 p-2 rounded-md mt-1 bg-white min-h-[60px]"
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={(e) => {
+                  const copy = [...extraSections];
+                  copy[index].comments = e.target.innerText;
+                  setExtraSections(copy);
+                }}
+              >
+                {section.comments}
+              </div>
             </div>
           </div>
         ))}
+
+        {/* Shared comment box for all extra sections */}
+        {extraSections.length > 0 && (
+          <div className="border-t pt-5 sm:pt-6 space-y-2">
+            <h4 className="font-semibold text-gray-800">Common Notes for All Additional Assessments:</h4>
+            <div
+              className="whitespace-pre-wrap border border-gray-300 p-3 rounded-md min-h-[60px] bg-gray-50"
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => setSharedExtraComment(e.target.innerText)}
+            >
+              {sharedExtraComment}
+            </div>
+          </div>
+        )}
+
+        {/* ================= FOOTER ================= */}
+        <div className="mt-8 sm:mt-10 pt-6 border-t border-gray-300 text-center text-xs text-gray-500">
+          <p>Healing Monk Clinic • 123 Wellness Street, Health City • Phone: +91 98765 43210</p>
+          <p>www.healingmonk.com • info@healingmonk.com</p>
+        </div>
       </div>
 
       {/* ================= BUTTONS ================= */}
-      <div className="text-center my-6 space-x-4">
+      <div className="text-center my-6 space-x-3 flex flex-wrap justify-center gap-3 px-4">
         <button
           onClick={addNewSection}
-          className="px-6 py-2 bg-gray-800 text-white rounded"
+          className="px-5 py-2 bg-teal-700 hover:bg-teal-800 text-white rounded-lg transition-colors duration-200 font-medium w-full sm:w-auto"
         >
           + Add Section
         </button>
 
         <button
           onClick={downloadPDF}
-          className="px-6 py-2 bg-black text-white rounded"
+          className="px-5 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg transition-colors duration-200 font-medium w-full sm:w-auto"
         >
           Download Report
         </button>
       </div>
+
+      <style>{`
+        .pdf-generating .no-print {
+          display: none !important;
+        }
+        @media print {
+          .no-print { display: none !important; }
+        }
+      `}</style>
     </>
   );
 };
