@@ -48,7 +48,7 @@ const AssessmentReport = () => {
       key: "move1",
       idealImage: "/Screenshot_27-12-2025_9443_.jpeg",
       comments:
-        "There is a deviation from the ideal image as the image shows-\nThe knees are unable to keep straight\nThe hands are not able to touch the ground\nLumbo pelvic rhythm has been altered and challenged",
+        "There is a deviation from the ideal image as the image shows",
       score: "35/100",
     },
     {
@@ -56,7 +56,7 @@ const AssessmentReport = () => {
       key: "move2",
       idealImage: "/Screenshot_27-12-2025_94349_.jpeg",
       comments:
-        "The knees are unable to keep straight\nThe hands are unable to touch to the toes\nBack is also not well arched showing difficulty to do the movements\nHamstrings tightness is the reason behind",
+        "The knees are unable to keep straight  Hamstrings tightness is the reason behind",
       score: "35/100",
     },
     {
@@ -84,7 +84,7 @@ const AssessmentReport = () => {
   const [extraSections, setExtraSections] = useState([]);
 
   // Shared comment for all extra sections
-  const [sharedExtraComment, setSharedExtraComment] = useState("Enter common comments for all additional assessments...");
+  const [sharedExtraComment, setSharedExtraComment] = useState("Enter common root cause or interpretation...");
 
   /* ================= HANDLE IMAGE UPLOADS ================= */
   const handleUpload = (key, e) => {
@@ -103,16 +103,18 @@ const AssessmentReport = () => {
     }
   };
 
-  /* ================= ADD NEW SECTION (TWO IMAGE UPLOAD BOXES) ================= */
+  /* ================= ADD NEW SECTION ================= */
   const addNewSection = () => {
     setExtraSections([
       ...extraSections,
       {
         id: Date.now(),
+        title: "Additional Assessment",
         leftImg: "",
         rightImg: "",
         comments: "Enter comments here...",
         score: "0/100",
+        observation: "Enter observation here...",
       },
     ]);
   };
@@ -165,7 +167,7 @@ const AssessmentReport = () => {
 
   const totalProgress = calculateTotalProgress();
 
-  /* ================= PDF DOWNLOAD (MULTI-PAGE WITH HEADER/FOOTER) ================= */
+  /* ================= PDF DOWNLOAD ================= */
   const downloadPDF = async () => {
     const element = reportRef.current;
     if (!element) return;
@@ -211,7 +213,6 @@ const AssessmentReport = () => {
     }
   };
 
-  // Helper function to add footer
   const addFooter = (pdf, pageNum, pageWidth, pageHeight) => {
     pdf.setFontSize(8);
     pdf.setTextColor(150);
@@ -351,12 +352,23 @@ const AssessmentReport = () => {
         </div>
 
         {/* ================= MOVEMENTS ================= */}
-        <h2 className="text-center font-bold text-xl text-gray-800 pt-4 pb-2 border-t border-gray-300">MOVEMENT ASSESSMENT</h2>
+        <h2 className="text-center font-bold text-xl text-gray-800 pt-28  border-t border-gray-300 ">MOVEMENT ASSESSMENT</h2>
         {movements.map((move, index) => (
           <div key={move.key} className="border border-gray-200 rounded-lg p-3 sm:p-4 space-y-3 mb-4">
             <div className="flex flex-col sm:flex-row justify-between gap-4">
               <div className="flex-1">
-                <h4 className="font-semibold text-gray-800 mb-2">{move.title}</h4>
+                <h4
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={(e) => {
+                    const copy = [...movements];
+                    copy[index].title = e.target.innerText;
+                    setMovements(copy);
+                  }}
+                  className="font-semibold text-gray-800 mb-2 inline-block border-b border-dashed border-gray-400 px-1"
+                >
+                  {move.title}
+                </h4>
                 <div className="mb-2">
                   <b>Score:</b>
                   <span
@@ -401,16 +413,43 @@ const AssessmentReport = () => {
                 {move.comments}
               </div>
             </div>
+
+            <div>
+              <b className="text-gray-700">Observation:</b>
+              <div
+                className="whitespace-pre-wrap border border-gray-300 p-2 rounded-md mt-1 bg-white min-h-[40px]"
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={(e) => {
+                  const copy = [...movements];
+                  copy[index].observation = e.target.innerText;
+                  setMovements(copy);
+                }}
+              >
+                {move.observation || "Enter observation here..."}
+              </div>
+            </div>
           </div>
         ))}
 
-        {/* ================= EXTRA DYNAMIC SECTIONS (TWO IMAGE UPLOADS) ================= */}
+        {/* ================= EXTRA DYNAMIC SECTIONS ================= */}
         {extraSections.map((section, index) => (
           <div key={section.id} className="border-t pt-5 sm:pt-6 space-y-4 border-gray-200">
             <div className="flex flex-col sm:flex-row justify-between gap-4">
               <div className="flex-1">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 gap-2">
-                  <h4 className="font-semibold text-gray-800">Additional Assessment {index + 1}</h4>
+                  <h4
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={(e) => {
+                      const copy = [...extraSections];
+                      copy[index].title = e.target.innerText;
+                      setExtraSections(copy);
+                    }}
+                    className="font-semibold text-gray-800 inline-block border-b border-dashed border-gray-400 px-1"
+                  >
+                    {section.title}
+                  </h4>
                   <span className="no-print">
                     <button
                       onClick={() => removeSection(section.id)}
@@ -465,13 +504,29 @@ const AssessmentReport = () => {
                 {section.comments}
               </div>
             </div>
+
+            <div>
+              <b className="text-gray-700">Observation:</b>
+              <div
+                className="whitespace-pre-wrap border border-gray-300 p-2 rounded-md mt-1 bg-white min-h-[40px]"
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={(e) => {
+                  const copy = [...extraSections];
+                  copy[index].observation = e.target.innerText;
+                  setExtraSections(copy);
+                }}
+              >
+                {section.observation || "Enter observation here..."}
+              </div>
+            </div>
           </div>
         ))}
 
-        {/* Shared comment box for all extra sections */}
+        {/* ================= ROOT CAUSE (ONLY IF EXTRA SECTIONS EXIST) ================= */}
         {extraSections.length > 0 && (
           <div className="border-t pt-5 sm:pt-6 space-y-2">
-            <h4 className="font-semibold text-gray-800">Common Notes for All Additional Assessments:</h4>
+            <h4 className="font-semibold text-gray-800">Root cause:</h4>
             <div
               className="whitespace-pre-wrap border border-gray-300 p-3 rounded-md min-h-[60px] bg-gray-50"
               contentEditable
@@ -483,10 +538,22 @@ const AssessmentReport = () => {
           </div>
         )}
 
-        {/* ================= FOOTER ================= */}
-        <div className="mt-8 sm:mt-10 pt-6 border-t border-gray-300 text-center text-xs text-gray-500">
-          <p>Healing Monk Clinic • 123 Wellness Street, Health City • Phone: +91 98765 43210</p>
-          <p>www.healingmonk.com • info@healingmonk.com</p>
+        {/* ================= FOOTER WITH OFFICIAL DETAILS ================= */}
+        <div className="mt-8 sm:mt-10 pt-6 border-t border-gray-300 text-center text-xs text-gray-600 leading-relaxed">
+          <p className="mb-1">
+            <strong>HealingMonk LLP</strong> : ACP-7752 | 41, Tathastu Apartment, Trisharan Nagar,<br className="sm:hidden" />
+            Opp Somalwar High School, Khamla, Nagpur, Maharashtra - 440025
+          </p>
+          <p className="mb-1">
+            Email: <a href="mailto:healingmonk.wellness@gmail.com" className="text-blue-600 hover:underline">healingmonk.wellness@gmail.com</a> | 
+            Web: <a href="https://www.thehealingmonk.in" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">thehealingmonk.in</a> | 
+            Mobile: +91 98345 50470
+          </p>
+          <p className="mt-2 text-gray-500">
+            <a href="https://www.thehealingmonk.in/testimonials" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline mx-1">Testimonials</a> |
+            <a href="https://www.instagram.com/dhealingmonk/?igsh=Z2tzc2lobXcwMXAz" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline mx-1">Instagram</a> |
+            <a href="https://www.linkedin.com/company/healingmonk/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline mx-1">LinkedIn</a>
+          </p>
         </div>
       </div>
 
@@ -513,6 +580,7 @@ const AssessmentReport = () => {
         }
         @media print {
           .no-print { display: none !important; }
+          a { color: inherit !important; text-decoration: none !important; }
         }
       `}</style>
     </>
